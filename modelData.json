@@ -1,0 +1,84 @@
+{
+    "categories": [
+            {
+                "forums": [
+                "-KpOx5Y4AqRr3sB4Ybwj",
+                "-KsjO4_W3W9Q2Z2UmuPr"
+                ],
+                "name": "Feedback & Information",
+                "slug": "feedback-and-information",
+                "id": "-KpR7vRkiRPpbUd_TVAR"
+            }
+    ],
+    "forums": [
+            {
+                "categoryId": "-KpR7vRkiRPpbUd_TVAR",
+                "description": "Important announcements about the forum.",
+                "lastPostId": "-KxxU6bYWl-6Xnu9g-56",
+                "name": "Announcements",
+                "slug": "announcements",
+                "threads": [
+                "-KvgjI6bfbWYlbYV5ndr"
+                ],
+                "id": "-KpOx5Y4AqRr3sB4Ybwj"
+            }
+            ],
+    "posts": [
+            {
+                "edited": {
+                "at": 1594037546,
+                "by": "ALXhxjwgY9PinwNGHpfai6OWyDu2",
+                "moderated": false
+                },
+                "publishedAt": 1594035908,
+                "text": "I'm curious to know what kind of pets the forum users have. I thought this could be a nice way to get to know each other a little better, so I'll start!\n\nMy dog is a five month old Italian mastiff (Cane Corso). Since I got him from Barcelona I thought a Spanish name would be suitable, and I named him Don Jefe, or Jefe for short (which means \"boss man\").\n\nJefe is a cute, little beast who eats 1.5 kg raw meat every day. He love to fart, snore and play.\n\nHere's Jefe with his Instagram hat and sqeaky ball 🎉🎉🎉\n![Don Jefe](http://i.imgur.com/XCWzR6l.jpg)\n",
+                "threadId": "-KsjWehQ--apjDBwSBCY",
+                "userId": "ALXhxjwgY9PinwNGHpfai6OWyDu2",
+                "id": "-KsjWehQ--apjDBwSBCZ"
+            }
+    ],
+    "stats": 
+            {
+                "postsCount": 23,
+                "threadsCount": 5,
+                "usersCount": 14,
+                "usersOnline": 0
+            },
+    "threads": [
+            {
+                "contributors": [
+                "FsCDAk9w8NeXEceLV87arpsXjnQ2",
+                "L664y3qZSubDbT1R6npC0EEybJ73",
+                "VXjpr2WHa8Ux4Bnggym8QFLdv5C3"
+                ],
+                "firstPostId": "-KsjWehQ--apjDBwSBCZ",
+                "forumId": "-KsjPat5MWCx-dkjNVg8",
+                "lastPostAt": 1594040497,
+                "lastPostId": "-KsjnAAjzfpznUVh4DSa",
+                "posts": [
+                "-KsjWehQ--apjDBwSBCZ",
+                "-KsjefUiIuNkJieBc5Rq",
+                "-KsjfvciJhJnebrL4Iw7",
+                "-KsjnAAjzfpznUVh4DSa"
+                ],
+                "publishedAt": 1594035908,
+                "slug": "what-kind-of-pet-do-you-have",
+                "title": "What kind of pet do you have?",
+                "userId": "ALXhxjwgY9PinwNGHpfai6OWyDu2",
+                "id": "-KsjWehQ--apjDBwSBCY"
+            }
+            ],
+    "users": [
+            {
+                "avatar": "https://avatars3.githubusercontent.com/u/2327556?v=4&s=460",
+                "email": "chrisvfritz@gmail.com",
+                "lastVisitAt": 1594772078,
+                "name": "Chris Fritz",
+                "isModerator": true,
+                "registeredAt": 1594632260,
+                "username": "chrisvfritz",
+                "usernameLower": "chrisvfritz",
+                "id": "38St7Q8Zi2N1SPa5ahzssq9kbyp1"
+            }
+    ]
+  }
