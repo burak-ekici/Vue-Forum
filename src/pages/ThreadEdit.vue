@@ -1,43 +1,42 @@
 <template>
-    <div class="col-full push-top">
-        <div class="forum-header ">
-            <div class="forum-details center">
-                <h1>{{forum.name}}</h1>
-                <p class="text-lead">{{forum.description}}</p>
-            </div>
-            <router-link
-        :to="{name:'ThreadCreate', params: {forumId: forum.id}}"
-        class="btn-green btn-small"
-      >
-        Start a thread
-      </router-link>
-        </div>
-    </div>
-    <div class="col-full push-top">
-        <ThreadList :threads="threads" />
-    </div>
+  <div class="col-full push-top">
+    <h1>
+      Editing <i>{{ thread.title }}</i>
+    </h1>
+
+    <ThreadEditor :title="thread.title" :text="text" @save='save' @cancel='cancel'/>
+  </div>
 </template>
 
+
 <script>
-import ThreadList from '@/components/ThreadList'
+import ThreadEditor from "../components/ThreadEditor.vue"
+
 export default {
-    components:{
-        ThreadList
+  components:{
+    ThreadEditor
+  },
+  props: {
+    id: { type: String, required: true }
+  },
+  computed:{
+      thread () {
+        return this.$store.state.threads.find(thread => thread.id === this.id)
+      },
+      text(){
+          return this.$store.state.posts.find( post => post.id === this.thread.posts[0]).text
+      }
+  },
+  methods: {
+    async save ({title,text}) {
+      // dispatch a vuex action
+      const thread = await this.$store.dispatch("updateThread", { text , title ,id: this.id})
+      this.$router.push({name:'ThreadShow' , params: {id : thread.id}})
     },
-    props:{
-        id:{
-            required:true,
-            type: String
-        }
-    },
-    computed:{
-        forum(){
-            return this.$store.state.forums.find(forum => forum.id === this.id)
-        },
-        threads(){
-            return this.$store.state.threads.filter(thread => thread.forumId === this.id)
-        }
+    cancel(){
+        this.$router.push({name:'ThreadShow', params:{id : this.id}})
     }
+  }
 }
 </script>
 

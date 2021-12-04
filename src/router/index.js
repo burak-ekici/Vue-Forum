@@ -1,6 +1,8 @@
 import Home from '@/pages/Home'
 import Forum from '@/pages/Forum'
 import ThreadShow from '@/pages/ThreadShow'
+import ThreadCreate from '@/pages/ThreadCreate'
+import ThreadEdit from '@/pages/ThreadEdit'
 import Category from '@/pages/Category'
 import NotFound from '@/pages/NotFound'
 import Profile from '@/pages/Profile'
@@ -23,7 +25,14 @@ const routes = [
   {
     path: '/me',
     name: 'Profile',
-    component: Profile
+    component: Profile,
+    meta : { toTop : true, smoothScroll : true}
+  },
+  {
+    path: '/me/edit',
+    name: 'ProfileEdit',
+    component: Profile,
+    props:{edit : true}
   },
   {
     path: '/forum/:id',
@@ -44,9 +53,21 @@ const routes = [
         name : 'NotFound', // redirige sur la page notFound
         params : {pathMatch : to.path.substring(1).split('/')}, // en lui conservant le lien url precedent pour qu'il voie ou est l'erreur dans le lien
         query : to.query, // le params renvoie que le lien avec le parametre, mais si le lien contient par ex : thread/123?id=fdsfsdf    lle ?id=fdsfsdf  ne sera pas conserver, c'est pourquoi on utilise le query
-        hash : to.hash // pareil que le query mais pour le hasj ex : thread/123#rzerzer    transmet le #rzerzer
+        hash : to.hash // pareil que le query mais pour le hash ex : thread/123#rzerzer    transmet le #rzerzer
       })
     }
+  },
+  {
+    path: '/forum/:forumId/thread/create',
+    name: 'ThreadCreate',
+    component: ThreadCreate,
+    props: true
+  },
+  {
+    path: '/thread/:id/edit',
+    name: 'ThreadEdit',
+    component: ThreadEdit,
+    props: true
   },
   {
     path: '/:pathMatch(.*)*',
@@ -59,5 +80,17 @@ const routes = [
 export default createRouter({
   // 4. Provide the history implementation to use. We are using the hash history for simplicity here.
   history: createWebHistory(),
-  routes // short for `routes: routes`
+  routes, // short for `routes: routes`
+  scrollBehavior(to, from, savedPosition){
+    // savedPosition est disponible que avec les bouton suivant precedent du navigateur 
+    if (savedPosition) {
+      return savedPosition
+    }else{
+      const scroll = {}
+      if(to.meta.toTop) scroll.top = 0
+      if(to.meta.smoothScroll) scroll.behavior = "smooth"
+      return scroll
+    }
+    
+  }
 })

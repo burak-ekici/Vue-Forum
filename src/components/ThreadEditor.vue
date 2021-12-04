@@ -1,41 +1,68 @@
 <template>
-    <div class="col-full push-top">
-        <div class="forum-header ">
-            <div class="forum-details center">
-                <h1>{{forum.name}}</h1>
-                <p class="text-lead">{{forum.description}}</p>
-            </div>
-            <router-link
-        :to="{name:'ThreadCreate', params: {forumId: forum.id}}"
-        class="btn-green btn-small"
-      >
-        Start a thread
-      </router-link>
-        </div>
-    </div>
-    <div class="col-full push-top">
-        <ThreadList :threads="threads" />
-    </div>
+    
+    <form @submit.prevent="save">
+      <div class="form-group">
+        <label for="thread_title">Title:</label>
+        <input
+          v-model="form.title"
+          type="text"
+          id="thread_title"
+          class="form-input"
+          name="title"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="thread_content">Content:</label>
+        <textarea
+          v-model="form.text"
+          id="thread_content"
+          class="form-input"
+          name="content"
+          rows="8"
+          cols="140"
+        ></textarea>
+      </div>
+
+      <div class="btn-group">
+        <button @click.prevent='$emit("cancel")' class="btn btn-ghost">Cancel</button>
+        <button @click.prevent='save' class="btn btn-blue" name="Publish">
+          <!-- {{title.length > 0 ? 'Update' : 'Publish'}}  <--- marche aussi -->
+          {{existing ? 'Update' : 'Publish'}}
+        </button>
+      </div>
+    </form>
+    
 </template>
 
 <script>
-import ThreadList from '@/components/ThreadList'
 export default {
-    components:{
-        ThreadList
-    },
     props:{
-        id:{
-            required:true,
-            type: String
+        title:{
+            type:String,
+            default:''
+        },
+        text:{
+            type:String,
+            default:''
+        }
+    },
+    data(){
+        return{
+            form:{
+                title:this.title,
+                text:this.text
+            }
         }
     },
     computed:{
-        forum(){
-            return this.$store.state.forums.find(forum => forum.id === this.id)
-        },
-        threads(){
-            return this.$store.state.threads.filter(thread => thread.forumId === this.id)
+        existing(){
+            return !!this.title    // "!!" permet de renvoyer un bouléen
+        }
+    },
+    methods:{
+        save(){
+            this.$emit('save', { ...this.form })
         }
     }
 }
