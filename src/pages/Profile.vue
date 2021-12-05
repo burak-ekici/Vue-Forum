@@ -23,7 +23,6 @@
 import PostList from '@/components/PostList'
 import UserProfileCard from '../components/UserProfileCard.vue'
 import UserProfileCardEditor from '../components/UserProfileCardEditor.vue'
-import { mapGetters } from 'vuex' //permet d'avoir les getter definie dans le store vuex
 export default {
   components: { PostList , UserProfileCard , UserProfileCardEditor },
   props:{
