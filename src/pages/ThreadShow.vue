@@ -1,6 +1,6 @@
 <template>
 <!-- component  qui liste les sujet du forum -->
-  <div class="col-large push-top">
+  <div v-if='thread' class="col-large push-top">
     
       <h1>
           {{thread.title}}
@@ -9,7 +9,7 @@
           </router-link>
       </h1>
       <p>
-            By <a href="#" class="link-unstyled">{{thread.author.name}}</a>, <AppDate :timestamp="thread.publishedAt" />.
+            By <a href="#" class="link-unstyled">{{'username'}}</a>, <AppDate :timestamp="thread.publishedAt" />.
             <span
                 style="float:right; margin-top: 2px;"
                 class="hide-mobile text-faded text-small"
@@ -17,7 +17,7 @@
             >
       </p>
 
-      <PostList :posts="threadPosts" />
+      <PostList :posts="posts" />
       <PostEditor @save='addPost' />
       
   </div>
@@ -27,12 +27,12 @@
 <script>
 import PostList from '@/components/PostList'
 import PostEditor from '@/components/PostEditor'
+import { mapActions } from 'vuex'
 export default {
   name:"ThreadShow",
   components:{
     PostList,
     PostEditor
-  
   },
   props:{
       id:{
@@ -40,29 +40,46 @@ export default {
           type:String
       }
   },
-  computed:{
-      threads(){
-          return this.$store.state.threads
-      },
-      posts(){
-          return this.$store.state.posts
-      },
-      thread(){
-          return this.$store.getters.thread(this.id)
-      },
-      threadPosts(){
-          return this.posts.filter(post => post.threadId === this.id)
-      }
+  computed: {
+    threads () {
+      return this.$store.state.threads
+    },
+    posts () {
+      return this.$store.state.posts
+    },
+    thread () {
+      return this.$store.getters.thread(this.id) || {}
+    },
+    threadPosts () {
+      return this.posts.filter(post => post.threadId === this.id)
+    }
   },
   methods:{
+      ...mapActions(['createPost','fetchThread','fetchUser','fetchPosts','fetchUsers']),
     addPost(eventData){
       const post = {
         ...eventData.post,
         threadId : this.id
       }
-      this.$store.dispatch("createPost",post)
+      this.createPost(post)
     }
-  }
+  },
+  async created() {
+        // fetch Data from firebase
+    // fetch le thread grace a l'id du props ( dans le lien grace a vue-router )
+    const thread = await this.fetchThread( {id : this.id})
+    
+
+    // fetch the post
+    const posts = await this.fetchPosts( {ids : thread.posts})
+    
+    // fetch le user associé a chaque post
+    const users = posts.map(post => post.userId).concat(thread.userId)
+    this.fetchUsers( {ids :users})
+    
+    
+  },
+  
 }
 </script>
 

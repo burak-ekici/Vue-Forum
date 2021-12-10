@@ -25,13 +25,11 @@ requireComponent.keys().forEach(function (fileName) {
   forumApp.component(baseComponentName, baseComponentConfig)
 })
 
-
 // App.component , ou dans notre cas, forumApp.component permet d'ajouter un component
 // dans le context global, donc pas besoin de l'importer ou declarer le component dans l'export des fichier
 // ce code est en commentaire car au dessus il traite deja le cas car j'ai nommé ce component AppDate
 // qui commence donc par App et donc cette ligne est executer par le script juste au dessus
 // ------->
 // forumApp.component('AppDate',AppDate)  
-
 
 forumApp.mount('#app')

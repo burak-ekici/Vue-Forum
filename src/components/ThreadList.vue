@@ -17,7 +17,7 @@
 
         <div class="activity">
           <p class="replies-count">
-           {{ thread.posts.length }} replies
+           {{ thread.repliesCount}} replies
           </p>
 
           <img class="avatar-medium" :src="userById(thread.userId).avatar" alt="">
@@ -51,14 +51,15 @@ export default {
     },
     users(){
         return this.$store.state.users
-    }
+    },
+
   },
   methods: {
     postById (postId) {
       return findById(this.posts , postId)
     },
     userById (userId) {
-      return findById(this.users, userId)
+      return findById(this.users, userId) || {}
     }
   },
   

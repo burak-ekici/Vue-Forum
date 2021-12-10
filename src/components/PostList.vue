@@ -13,7 +13,8 @@
                     <img  class="avatar-large" :src="findUser(post.userId).avatar" alt="">
                 </a>
 
-                <p class="desktop-only text-small">107 posts</p>
+                <p class="desktop-only text-small">{{findUser(post.userId).postsCount}} posts</p>
+                <p class="desktop-only text-small">{{findUser(post.userId).threadsCount}} threads</p>
 
             </div>
 
@@ -37,11 +38,10 @@
 
         </div>
 
-      </div>
+  </div>
 </template>
 
 <script>
-import {findById} from '@/helpers'
 export default {
     props:{
         posts:{
@@ -52,14 +52,16 @@ export default {
     computed:{
         users(){
             return this.$store.state.users
-        }
+        },
     },
     methods: {
-        findUser (ID) {
-        return findById(this.users, ID)
+        findUser (userId){
+            return this.$store.getters.user(userId)
         },
-        
     },
+    created(){
+        this.$store.dispatch('fetchUsers',{ids:this.posts.map(post => post.userId)})
+    }
     
 
 }

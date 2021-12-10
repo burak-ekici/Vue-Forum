@@ -1,5 +1,5 @@
 <template>
-    <div class="col-full push-top">
+    <div v-if="forum" class="col-full push-top">
         <div class="forum-header ">
             <div class="forum-details center">
                 <h1>{{forum.name}}</h1>
@@ -21,6 +21,7 @@
 <script>
 import ThreadList from '@/components/ThreadList'
 import {findById} from "@/helpers"
+import { mapActions } from 'vuex'
 export default {
     components:{
         ThreadList
@@ -31,13 +32,22 @@ export default {
             type: String
         }
     },
+    methods:{
+        ...mapActions(['fetchForum','fetchThreads','fetchUsers'])
+    },
     computed:{
         forum(){
             return findById(this.$store.state.forums, this.id)
         },
         threads(){
-            return this.$store.state.threads.filter(thread => thread.forumId === this.id)
+            if(!this.forum) return []
+            return this.forum.threads.map( threadId => this.$store.getters.thread(threadId))
         }
+    },
+    async created(){
+        const forum = await this.fetchForum({id: this.id})
+        const threads = await this.fetchThreads({ids: forum.threads})
+        this.fetchUsers({ids: threads.map(thread=> thread.userId)})
     }
 }
 </script>

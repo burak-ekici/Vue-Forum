@@ -1,62 +1,75 @@
 import {createStore} from 'vuex'
-import sourceData from '@/data.json'
 import {findById , upsert} from "@/helpers"
+import db from '../config/firebase'
+import { doc, onSnapshot, query, where, collection, getDocs, getDoc } from "firebase/firestore";
+
 
 
 export default createStore(
     {
         state: {
-            ...sourceData,
+            categories:[],
+            forums:[],
+            threads:[],
+            posts:[],
+            users:[],
             authId: 'VXjpr2WHa8Ux4Bnggym8QFLdv5C3'
         },
         getters:{
-            authUser: state => {
+            authUser: (state , getters ) => {
+                return getters.user(state.authId)
+            },
+            user: state =>{
+                return (id)=>{
+                    const user = findById(state.users , id);
 
-                const user = findById(state.users , state.authId);
+                    if(!user){
 
-                if(!user){
+                        return null;
 
-                    return null;
-
-                }
+                    }
                 
-                return {
+                    return {
 
-                    ...user,
-                    // le "get" permet juste de pouvoir appelé la fonction avec authUser.Posts
-                    // au lieu de authUser.Posts() sans le get  ... juste bon à savoir mais pas obligatoire
-                    get posts () {
+                        ...user,
+                        // le "get" permet juste de pouvoir appelé la fonction avec authUser.Posts
+                        // au lieu de authUser.Posts() sans le get  ... juste bon à savoir mais pas obligatoire
+                        get posts () {
 
-                        return state.posts.filter(
+                            return state.posts.filter(
 
-                            post => post.userId === user.id
+                                post => post.userId === user.id
 
-                        )
+                            )
 
-                    },
-                    get postsCount () {
+                        },
+                        get postsCount () {
 
-                        return this.posts.length
-                    },
-                    get threads () {
+                            return this.posts.length
 
-                        return state.threads.filter(
+                        },
+                        get threads () {
 
-                            post => post.userId === user.id
+                            return state.threads.filter(
 
-                        )
+                                post => post.userId === user.id
 
-                    },
-                    get threadsCount () {
+                            )
 
-                        return this.threads.length
+                        },
+                        get threadsCount () {
+
+                            return this.threads.length
+
+                        }
                     }
                 }
-                
             },
-            thread: state => {
+            thread: state => { // on ne peux pas donner des parametre dans un getter
+                               // c'est pourquoi on lui renvoie une function qui prendra le parametre
                 return (id) => {
                   const thread = findById(state.threads, id)
+                  if(!thread) return {}
                   return {
                     ...thread,
                     get author () {
@@ -66,10 +79,10 @@ export default createStore(
                       return thread.posts.length - 1
                     },
                     get contributorsCount () {
-                      if(thread.contributors.length > 0){
+                      if(thread.contributors?.length){
                         return thread.contributors.length;
                       }else{
-                          return '1'
+                        return '0'
                       }
                       
                     }
@@ -86,7 +99,7 @@ export default createStore(
 
                 post.publishedAt = Math.floor(Date.now() / 1000)
 
-                context.commit("setPost", {post})
+                context.commit("setItem", { resource :'posts', item: post})
 
                 context.commit('appendPostToThread', {childId : post.id , parentId : post.threadId})
             
@@ -102,7 +115,7 @@ export default createStore(
 
                 const thread = {forumId, title, publishedAt, userId, id}
 
-                context.commit("setThread", {thread})
+                context.commit("setItem", { resource:'threads' , item : thread})
 
                 context.commit("appendThreadToUser", {parentId: userId , childId: id})
 
@@ -117,7 +130,7 @@ export default createStore(
             },
             updateUser(context, user){
 
-                context.commit('setUser', {user , userId : user.id})
+                context.commit('setItem', {resource : 'users', item: user})
 
             },
             async updateThread(context, {title , text , id}){
@@ -130,39 +143,88 @@ export default createStore(
 
                 const newPost = { ...post, text}
 
-                context.commit('setThread',{thread : newThread})
+                context.commit('setItem',{resource : 'threads', item : newThread})
 
-                context.commit('setPost',{post : newPost})
+                context.commit('setItem',{ resource: 'posts', item : newPost})
 
                 return newThread
             
+            },
+            fetchCategory({dispatch}, {id}){
+                return dispatch('fetchItem', { resource:'categories', id})
+            },
+            fetchCategories({dispatch}, {id}){
+                return dispatch('fetchItem', { resource:'categories', ids})
+            },
+            fetchThread(context , {id}){
+                return context.dispatch('fetchItem', { resource:'threads', id})
+            },
+            fetchThreads(context , {ids}){
+                return context.dispatch('fetchItems',{resource:'threads', ids})
+            },
+            fetchPost(context , {id}){
+                return context.dispatch('fetchItem', { resource:'posts', id})
+            },
+            fetchPosts(context , {ids}){
+                return context.dispatch('fetchItems',{resource:'posts', ids})
+            },
+            fetchUser( context , {id}){
+                return context.dispatch('fetchItem', { resource:'users', id})
+            },
+            fetchUsers(context , {ids}){
+                return context.dispatch('fetchItems',{resource:'users', ids})
+            },
+            fetchForum(context, {id}){
+                return context.dispatch('fetchItem', { resource:'forums', id})
+            },
+            fetchForums(context , {ids}){
+                return context.dispatch('fetchItems',{resource:'forums', ids})
+            },
+            async fetchItem( context, {resource ,id}){
+                const item = doc(db, resource , id);
+                const itemSnap = await getDoc(item)
+                let itemToReturn = {...itemSnap.data(), id : itemSnap.id}
+                onSnapshot(doc(db, resource , id), (doc) => {
+                    itemToReturn = {...doc.data(),id: doc.id};
+                    context.commit('setItem', {resource , item: itemToReturn})
+                });
+                context.commit('setItem', {resource , item: itemToReturn})
+                return itemToReturn
+            },
+            fetchItems ({ dispatch }, { ids, resource }) {
+                return Promise.all(ids.map(id => dispatch('fetchItem', { id, resource })))
+            },
+            async fetchAllCategories(context){
+                const categories = [];
+                // recupere tous les threads de firebase
+                const allCategories = await getDocs(collection(db, "categories"))
+                allCategories.forEach(document=> {
+                    const item = {id : document.id , ...document.data()}
+                    context.commit('setItem', {resource : 'categories' , item})
+                    categories.push({...document.data()})
+                    onSnapshot(doc(db,'categories',document.id),(el)=>{
+                        const item = {id : el.id , ...el.data()}
+                        context.commit('setItem', {resource : 'categories' , item})
+                        const index = categories.indexOf(el.data())
+                        if(index != -1){
+                            categories.push({...el.data()})
+                        }else{
+                            categories[index] = {...el.data()}
+                        }
+                    })
+                })
+                return categories;
             }
+
         },
         mutations:{
-
-            setPost(state, {post}){
-                // fonction qui creer ou ajoute un post selon le parametre post donné
-                // si post vien du formulaire ...Edit , il vien avec un id et donc index aura uen valeur 
-                // ce qui metra à jour le post existant
-                upsert(state.posts , post) // fonction dans le dossier helper 
-            
-            },
-            setThread(state, {thread}){
-
-                upsert(state.threads , thread) // fonction dans le dossier helper 
-            
-            },
-            setUser(state, {user}){
-
-                const userIndex = state.users.findIndex(el => el.id === user.id)
-
-                state.users[userIndex] = user
-
+            setItem(state, {resource ,item}){
+                upsert(state[resource], item)
             },
             appendPostToThread: makeAppendChildToParentMutation({ parent: 'threads', child: 'posts' }),
             appendThreadToForum: makeAppendChildToParentMutation({ parent: 'forums', child: 'threads' }),            
             appendThreadToUser: makeAppendChildToParentMutation({ parent: 'users', child: 'threads' }),
-    appendContributorToThread: makeAppendChildToParentMutation({ parent: 'threads', child: 'contributors' })
+            appendContributorToThread: makeAppendChildToParentMutation({ parent: 'threads', child: 'contributors' })
         }
     }
 )
@@ -174,12 +236,17 @@ export default createStore(
 
 function makeAppendChildToParentMutation ({ parent, child }) {
     return (state, { childId, parentId }) => {
-      const resource = findById(state[parent], parentId)
-      resource[child] = resource[child] || []
-      const test = resource.posts || []
-  
-      if (!resource[child].includes(childId)) {
-        resource[child].push(childId)
-      }
+        const resource = findById(state[parent], parentId)
+        if(!resource){
+            console.warn(`Appending ${child} ${childId} to ${parent} ${parentId} failed because the parent didn't exist`)
+            return
+        }
+        resource[child] = resource[child] || []
+        
+
+        if (!resource[child].includes(childId)) {
+            resource[child].push(childId)
+        }
     }
-  }
+}
+

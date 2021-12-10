@@ -1,8 +1,8 @@
 <template>
   <ForumList
     v-for="category in categories"
-    :key="category.id"
     :forums="getForumsForCategory(category)"
+    :key="category.id"
     :title ="category.name"
     :categoryId="category.id"
    />
@@ -18,13 +18,20 @@ export default {
         categories:{
             required: true,
             type: Array
+        },
+        forums:{
+            required:true,
+            type: Object
         }
     },
     methods:{
         getForumsForCategory(category){
-            return this.$store.state.forums.filter(forum => forum.categoryId === category.id)
+            
+            return this.forums.filter(forum => forum.categoryId === category.id)
         }
     }
+
+    
 }
 </script>
 

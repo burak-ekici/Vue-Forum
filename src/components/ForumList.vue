@@ -54,8 +54,10 @@ export default {
       } else {
         return 'no threads'
       }
+
     },
-  }
+  },
+  
 
 }
 </script>

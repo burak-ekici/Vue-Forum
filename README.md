@@ -6,5 +6,6 @@ Creation d'un Forum en vue.JS et Back-end en Firebase
 -Vuex
 -VueRouter
 -firebase
+  - cloud Firestore version 9
 -DayJs
 
