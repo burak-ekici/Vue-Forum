@@ -3,11 +3,15 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router/index'
 import store from './store/index'
+import FontAwesome from '@/plugins/FontAwesome' // retourne une fonction
 
 const forumApp = createApp(App)
 
+// forumApp.use(...) attend une fonction ou objet en parametre et l'instencie vace forumApp ex : le parametre FontAweseome est une fonction prenant en paramétre (app) => app.component(fa , FontAwesomeIcon)
+// il s'instenciera par forumApp en paramétre
 forumApp.use(router)
 forumApp.use(store)
+forumApp.use(FontAwesome)
 
 // fonction dans la doc vue.js -> section (en anglais) 'base component names ->  puis detailed explanation' 
 // Permet de chercher tous les fichier dans le dossier components qui commencent par App

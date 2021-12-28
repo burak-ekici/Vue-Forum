@@ -13,6 +13,8 @@
 import ThreadEditor from "../components/ThreadEditor.vue"
 import {findById} from "@/helpers"
 import { mapActions } from "vuex"
+import asyncDataStatus from '@/mixins/asyncDataStatus'
+
 export default {
     components:{
         ThreadEditor
@@ -20,6 +22,7 @@ export default {
     props: {
         id: { type: String, required: true }
     },
+    mixins: [asyncDataStatus], 
     computed:{
         thread () {
             return findById(this.$store.state.threads, this.id)

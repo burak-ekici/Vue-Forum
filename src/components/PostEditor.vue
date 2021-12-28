@@ -2,11 +2,11 @@
   <div class="col-full">
       <form @submit.prevent="save">
           <div class="form-group">
-              <textarea v-model="text" class="form-input" name="" id="" cols="30" rows="10"></textarea>
+              <textarea v-model="postCopy.text" class="form-input" name="" id="" cols="30" rows="10"></textarea>
           </div>
           <div class="form-actions">
               <button class="btn-blue">
-                  Submit post
+                  {{ buttonLabel}}
               </button>
           </div>
       </form>
@@ -17,19 +17,31 @@
 export default {
     data(){
         return{
-            text : ''
+            postCopy : {...this.post}
+        }
+    },
+    props:{
+        post: {
+            type : Object,
+            default : () => ({text:null})
+        }
+    },
+    computed:{
+        buttonLabel(){
+            if(this.post.id){
+                return 'Update Post'
+            }else{
+                return 'Submit post'
+            }
         }
     },
     methods:{
         save(){
-            const post = {
-                text:this.text,
-            }
-            this.$emit('save', { post } )
+            this.$emit('save', { post : this.postCopy } )
             // this.post.push(post)
             // this.thread.post.push(postId)
 
-            this.text = ""
+            this.postCopy.text = ""
         }
     }
 

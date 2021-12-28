@@ -7,7 +7,8 @@ import Category from '@/pages/Category'
 import NotFound from '@/pages/NotFound'
 import Profile from '@/pages/Profile'
 import { createRouter, createWebHistory } from 'vue-router'
-import dataFromJson from './../data.json'
+import store from '@/store'
+
 
 
 const routes = [
@@ -77,7 +78,7 @@ const routes = [
 
 ]
 
-export default createRouter({
+const router = createRouter({
   // 4. Provide the history implementation to use. We are using the hash history for simplicity here.
   history: createWebHistory(),
   routes, // short for `routes: routes`
@@ -94,3 +95,8 @@ export default createRouter({
     
   }
 })
+router.beforeEach(()=>{
+  store.dispatch('unsubscribeAllSnapshots')
+})
+
+export default router

@@ -15,3 +15,8 @@ export const upsert = ( resources , param ) => {
         resources.push(param) // permet de creer un nouveau post
     }
 }
+
+export const docToResource = (doc) => {
+    if(typeof doc?.data !== 'function') return doc
+    return { ...doc.data(), id: doc.id}
+}

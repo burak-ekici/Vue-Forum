@@ -1,9 +1,9 @@
 
 <template>
     <!-- component qui prend en argument une date en miliseconde et renvoie une date grace a la librairie dayjs  -->
-    <span :title='humanFriendlyDate()'>
+    <span :title='humanFriendlyDate'>
 
-        {{diffForHumans()}}
+        {{diffForHumans}}
                 
     </span>
 </template>
@@ -19,15 +19,18 @@ export default {
     props:{
         timestamp : {
             required:true,
-            type : Number
+            type : [Number, Object]
         }
     },
-    methods:{
+    computed:{
+        normalizedTimestamp (){
+            return this.timestamp?.seconds || this.timestamp
+        },
         diffForHumans(){
-            return dayjs.unix(this.timestamp).fromNow()
+            return dayjs.unix(this.normalizedTimestamp).fromNow()
         },
         humanFriendlyDate(){
-            return dayjs.unix(this.timestamp).format('llll')
+            return dayjs.unix(this.normalizedTimestamp).format('llll')
         }
     }
 }

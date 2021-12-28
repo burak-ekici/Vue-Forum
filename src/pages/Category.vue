@@ -1,20 +1,24 @@
 <template>
-  <h1>{{category.name}}</h1>
-  <ForumList  
-    :title ="category.name"
-    :forums="getForumsForCategory(category)"
-  />
+    <div v-if='asyncDataStatus_ready' class="container" >
+        <h1>{{category.name}}</h1>
+        <ForumList  
+        :title ="category.name"
+        :forums="getForumsForCategory(category)"
+        />
+    </div>
 </template>
 
 <script>
 import ForumList from "@/components/ForumList"
 import {findById} from "@/helpers"
 import { mapActions } from "vuex"
+import asyncDataStatus from '@/mixins/asyncDataStatus'
 
 export default {
     components:{
         ForumList
     },
+    mixins: [asyncDataStatus], 
     props:{
         id: {
             required: true,

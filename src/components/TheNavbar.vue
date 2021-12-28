@@ -1167,7 +1167,7 @@ ul .navbar-item:last-child, ul .navbar-mobile-item:last-child {
 }
 
 header > a.logo {
-    width: 100px;
+    width: 200px;
 }
 
 @media (min-width: 240px) and (max-width: 720px) {

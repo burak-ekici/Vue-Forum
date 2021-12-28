@@ -28,12 +28,15 @@
 import PostList from '@/components/PostList'
 import PostEditor from '@/components/PostEditor'
 import { mapActions } from 'vuex'
+import asyncDataStatus from '@/mixins/asyncDataStatus'
+
 export default {
   name:"ThreadShow",
   components:{
     PostList,
     PostEditor
   },
+  mixins: [asyncDataStatus], 
   props:{
       id:{
           required: true,
@@ -66,6 +69,7 @@ export default {
   },
   async created() {
         // fetch Data from firebase
+
     // fetch le thread grace a l'id du props ( dans le lien grace a vue-router )
     const thread = await this.fetchThread( {id : this.id})
     

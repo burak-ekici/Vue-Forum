@@ -22,7 +22,7 @@ export default {
                 },
                 get postsCount () {
 
-                    return this.posts.length
+                    return user.postsCount || 0
                 },
                 get threads () {
 
@@ -30,7 +30,7 @@ export default {
                 },
                 get threadsCount () {
 
-                    return this.threads.length
+                    return user.threads?.length || 0
                 }
             }
         }
@@ -46,7 +46,7 @@ export default {
               return findById(state.users, thread.userId)
             },
             get repliesCount () {
-              return thread.posts.length - 1
+              return thread.posts?.length > 0 ? thread.posts.length - 1 : 0
             },
             get contributorsCount () {
               if(thread.contributors?.length){

@@ -11,11 +11,13 @@
 import ThreadEditor from "../components/ThreadEditor.vue"
 import {findById} from "@/helpers"
 import { mapActions } from "vuex"
+import asyncDataStatus from '@/mixins/asyncDataStatus'
 
 export default {
   components:{
     ThreadEditor
   },
+  mixins: [asyncDataStatus], 
   props: {
     forumId: { type: String, required: true }
   },

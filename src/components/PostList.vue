@@ -1,6 +1,6 @@
 <template>
-<!-- component qui liste les postes du sujet ( thread ) selectionné -->
-  <div class="post-list">
+
+    <div class="post-list">
 
         <div v-for="post in posts" :key="post.id" class="post">
 
@@ -21,16 +21,34 @@
 
             <div class="post-content">
 
-                <div>
+                <div class='col-full'>
 
-                    <p>{{post.text}}</p>
+                    <PostEditor
+                     :post='post' 
+                     @save="handleUpdate" 
+                     v-if='editing === post.id'/>
+
+                    <p v-else>{{post.text}}</p>
 
                 </div>
+
+                <a  
+                    v-if='$store.state.authId === post.userId'
+                    @click.prevent='toggleEditMode(post.id)' 
+                    href="#" 
+                    style="margin-left: auto; padding-left:10px;"
+                    class="link-unstyled" 
+                    title="Make a change">
+
+                    <fa icon="pencil-alt" />
+                </a>
 
             </div>
 
 
             <div class="post-date text-faded">
+
+                <div v-if='post.edited?.at' class="edition-info">edited</div>
 
                 <appDate :timestamp="post.publishedAt" />
                 
@@ -38,32 +56,47 @@
 
         </div>
 
-  </div>
+    </div>
 </template>
 
 <script>
+import PostEditor from "./PostEditor.vue"
+import { mapActions } from "vuex";
 export default {
-    props:{
-        posts:{
+    props: {
+        posts: {
             required: true,
             type: Array
         }
     },
-    computed:{
-        users(){
-            return this.$store.state.users
-        },
+    data() {
+        return {
+            editing: null
+        };
+    },
+    computed: {
+        users() {
+            return this.$store.state.users;
+        }
     },
     methods: {
-        findUser (userId){
-            return this.$store.getters.user(userId)
+        ...mapActions(['updatePost']),
+        findUser(userId) {
+            return this.$store.getters.user(userId);
         },
+        toggleEditMode(id) {
+            this.editing = id === this.editing ? null : id;
+        },
+        handleUpdate(event){
+            this.updatePost(event.post)
+            this.editing = null
+        }
     },
-    created(){
-        this.$store.dispatch('fetchUsers',{ids:this.posts.map(post => post.userId)})
-    }
-    
-
+    async created() {
+        await this.$store.dispatch("resetPosts");
+        this.$store.dispatch("fetchUsers", { ids: this.posts.map(post => post.userId) });
+    },
+    components: { PostEditor }
 }
 </script>
 

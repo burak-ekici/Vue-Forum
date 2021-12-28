@@ -22,10 +22,13 @@
 import ThreadList from '@/components/ThreadList'
 import {findById} from "@/helpers"
 import { mapActions } from 'vuex'
+import asyncDataStatus from '@/mixins/asyncDataStatus'
+
 export default {
     components:{
         ThreadList
     },
+    mixins: [asyncDataStatus], 
     props:{
         id:{
             required:true,
@@ -45,6 +48,7 @@ export default {
         }
     },
     async created(){
+        await this.$store.dispatch('resetThreads')
         const forum = await this.fetchForum({id: this.id})
         const threads = await this.fetchThreads({ids: forum.threads})
         this.fetchUsers({ids: threads.map(thread=> thread.userId)})
