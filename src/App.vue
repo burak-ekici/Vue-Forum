@@ -1,21 +1,41 @@
 <template>
   <TheNavbar />
   <div class="container">
-    <router-view />
+    <router-view v-show="showPage" @ready="onPageReady" />
+    <AppSpinner v-show="!showPage"></AppSpinner>
   </div>
 </template>
 
 <script>
 import { mapActions } from 'vuex'
 import TheNavbar from './components/TheNavbar.vue'
+import AppSpinner from './components/AppSpinner.vue'
+import Nprogress from 'nprogress'    // librairie pour une progress Bar en haut du navigateur
 export default {
-  components: { TheNavbar },
+  components: { TheNavbar, AppSpinner },
   name: 'App',
+  data(){
+    return{
+      showPage:false
+    }
+  },
   methods:{
-    ...mapActions(['fetchAuthUser'])
+    ...mapActions(['fetchAuthUser']),
+    onPageReady(){
+      this.showPage = true
+      Nprogress.done()
+    }
   },
   created(){
     this.fetchAuthUser()
+    Nprogress.configure({
+      speed:200,
+      showSpinner : false
+    })
+    this.$router.beforeEach(() => {
+      this.showPage = false
+      Nprogress.start()
+    })
   }
 }
 </script>
@@ -30,4 +50,10 @@ export default {
   margin-top: 60px;
 }
 
+@import "assets/style.css";
+@import "~nprogress/nprogress.css";  /* permet de recuperer nprogress.css dans le node package avec ~ */
+
+#nprogress .bar{
+  background : #57AD8D !important     /* change la couleur du progress bar de la librairie Nprogress */
+}
 </style>
