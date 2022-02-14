@@ -1,5 +1,6 @@
 import db from '../config/firebase'
-import { doc,increment, onSnapshot, collection,serverTimestamp, getDocs, getDoc,arrayUnion, writeBatch, updateDoc} from "firebase/firestore";
+import { doc,increment, onSnapshot, collection,serverTimestamp, getDocs, getDoc,arrayUnion, writeBatch, updateDoc , setDoc} from "firebase/firestore";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword , GoogleAuthProvider , signInWithPopup} from "firebase/auth";
 import {findById, docToResource} from "@/helpers"
 
 
@@ -62,6 +63,42 @@ export default {
         return findById(context.state.threads , threadRef.id)
 
     },
+    async registerUserWithEmailAndPassword(context, {avatar = null , email , name , username , password}){
+        const auth = getAuth();
+        const result = await createUserWithEmailAndPassword(auth, email, password)
+        await context.dispatch('createUser', {id : result.user.uid , email , avatar , name , username})
+    },
+    signInWithEmailAndPassword(context, {email , password}){
+        const auth = getAuth();
+        return signInWithEmailAndPassword(auth,email,password)
+    },
+    async signInWithGoogle(context){
+        const provider = new GoogleAuthProvider();
+        const auth = getAuth();
+        const response = await signInWithPopup(auth, provider)
+        const user = response.user
+        const userRef = doc(db , 'users' , user.uid)
+        const userDoc =  await getDoc(userRef)
+        if(userDoc.exists){
+            return context.dispatch('createUser', {id : user.uid , name : user.displayName , email : user.email , username : user.email , avatar : user.photoURL})
+        }
+    },
+    async signOut(context){
+        const auth = await getAuth();
+        await auth.signOut()
+        context.commit('setAuthId',null)
+    },
+    async createUser(context , {id,email,name,username,avatar = null}){
+        const registeredAt = serverTimestamp()
+        const usernameLower = username.toLowerCase()
+        const mail = email.toLowerCase()
+        const user = { avatar , mail , username , usernameLower , registeredAt , name}
+        const userRef = await doc(db , 'users', id) 
+        await setDoc(userRef, user);
+        const newUser = await getDoc(userRef)
+        context.commit('setItem',{resource : 'users' , item : newUser})
+        return docToResource(newUser)
+    },
     updateUser : (context, user) => context.commit('setItem', {resource : 'users', item: user}),
     async updatePost (context , {text , id}){
         const post = {
@@ -104,8 +141,21 @@ export default {
     fetchUsers:({dispatch} , {ids}) => dispatch('fetchItems',{resource:'users', ids}),
     fetchForum:({dispatch}, {id}) => dispatch('fetchItem', { resource:'forums', id}),
     fetchForums:({dispatch} , {ids}) => dispatch('fetchItems',{resource:'forums', ids}),
-    fetchAuthUser:({dispatch,state}) => dispatch('fetchItem',{resource:'users',id :state.authId}),
-    async fetchItem( context, {resource ,id}){
+    fetchAuthUser:({dispatch, commit}) => {
+        const auth = getAuth();
+        const userId = auth.currentUser?.uid
+        if(!userId) return //empeche une erreur s'il n'y a pas d'user connecté
+
+        dispatch('fetchItem', {
+            resource: 'users',
+            id: userId,
+            handleUnsubscribe: (unsubscribe) => {
+              commit('setAuthUserUnsubscribe', unsubscribe)
+            }
+        })
+        commit('setAuthId', userId)
+    },
+    async fetchItem( context, {resource ,id , handleUnsubscribe = null}){
 
         const item = doc(db, resource , id);
         const itemSnap = await getDoc(item)
@@ -114,8 +164,12 @@ export default {
             itemToReturn = {...doc.data(),id: doc.id};
             context.commit('setItem', {resource , item: itemToReturn})
         });
-        context.commit('appendUnsubscribe', {unsubscribe}) // ajoute unsubscribe ( le retour de la fonction on snapshot ) dans le tableau unsubscribes dans le state 
         context.commit('setItem', {resource , item: itemToReturn})
+        if (handleUnsubscribe) {
+            handleUnsubscribe(unsubscribe)
+        } else {
+            context.commit('appendUnsubscribe', { unsubscribe })
+        }
         return itemToReturn
     },
     fetchItems ({ dispatch }, { ids, resource }) {
@@ -125,6 +179,12 @@ export default {
         context.state.unsubscribes.forEach(unsubscribe => unsubscribe())
         context.commit('resetUnsubscribes')
     },
+    async unsubscribeAuthUserSnapshot ({ state, commit }) {
+        if (state.authUserUnsubscribe) {
+          state.authUserUnsubscribe()
+          commit('setAuthUserUnsubscribe', null)
+        }
+      },
     async fetchAllCategories(context){
         const categories = [];
         // recupere tous les threads de firebase

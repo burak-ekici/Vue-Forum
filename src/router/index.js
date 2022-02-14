@@ -4,6 +4,8 @@ import ThreadShow from '@/pages/ThreadShow'
 import ThreadCreate from '@/pages/ThreadCreate'
 import ThreadEdit from '@/pages/ThreadEdit'
 import Category from '@/pages/Category'
+import SignIn from '@/pages/SignIn'
+import Register from '@/pages/Register'
 import NotFound from '@/pages/NotFound'
 import Profile from '@/pages/Profile'
 import { createRouter, createWebHistory } from 'vue-router'
@@ -63,6 +65,16 @@ const routes = [
     name: 'ThreadCreate',
     component: ThreadCreate,
     props: true
+  },
+  {
+    path: '/signin',
+    name: 'SignIn',
+    component: SignIn
+  },
+  {
+    path: '/register',
+    name: 'Register',
+    component: Register
   },
   {
     path: '/thread/:id/edit',

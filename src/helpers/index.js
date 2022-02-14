@@ -9,10 +9,10 @@ export const upsert = ( resources , param ) => {
     // ce qui metra à jour le post existant
 
     const index = resources.findIndex( p => p.id === param.id)
-    if(param.id && index !== -1){ // permet de metre a jour un post existant
+    if(param.id && index !== -1){ // permet de metre a jour un post ou autres existant
         resources[index] = param
     }else{
-        resources.push(param) // permet de creer un nouveau post
+        resources.push(param) // permet de creer un nouveau post ou autres
     }
 }
 

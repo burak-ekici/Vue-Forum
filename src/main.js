@@ -2,10 +2,19 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router/index'
-import store from './store/index'
+import store from './store/index' // permet d'acceder au store en dehors de l'instance vue
 import FontAwesome from '@/plugins/FontAwesome' // retourne une fonction
+import { getAuth } from "firebase/auth";
 
 const forumApp = createApp(App)
+
+const auth = getAuth();
+auth.onAuthStateChanged(user => {
+  store.dispatch('unsubscribeAuthUserSnapshot')
+  if(user){
+    store.dispatch('fetchAuthUser')
+  }
+})
 
 // forumApp.use(...) attend une fonction ou objet en parametre et l'instencie vace forumApp ex : le parametre FontAweseome est une fonction prenant en paramétre (app) => app.component(fa , FontAwesomeIcon)
 // il s'instenciera par forumApp en paramétre

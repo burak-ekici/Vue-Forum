@@ -39,7 +39,9 @@ export default {
   },
   async created(){
     await this.fetchForum({id:this.forumId})
+
     this.asyncDataStatus_fetched()
+
   }
 }
 </script>
