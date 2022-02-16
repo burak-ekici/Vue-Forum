@@ -62,7 +62,20 @@ export default {
     },
     methods:{
         save(){
+            this.$emit('clean')
             this.$emit('save', { ...this.form })
+        }
+    },
+    watch:{
+        form:{  // on donne le nom du champ que l'on veux observer, permet a vue de recuperer les données de cette data ,permet de savoir si on a changer quelque chose pour ne pas demander a ne pas quitter pour ne pas perdre les donnée saisie dans le formulaire
+            handler(){
+                if(this.form.title !== this.title || this.form.text !== this.text){ // this.form.title regarde la data, this.title est definie par vue avec la fonction watch
+                    this.$emit('dirty') // de nouvelles données on été saisie, donc on emet dirty pour indiquer a la page ainsi qua sa fonction router de demander si l'utilisateur veux vraiment quitter la page au risque de perdre ce qu'il a entrer
+                }else{
+                    this.$emit('clean') // rien n'a changé dans le formulaire
+                }
+            },
+            deep:true
         }
     }
 }

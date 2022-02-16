@@ -9,7 +9,7 @@
         </router-link>
     </h1>
     <p>
-        By <a href="#" class="link-unstyled">{{'username'}}</a>, <AppDate :timestamp="thread.publishedAt" />.
+        By <a href="#" class="link-unstyled">{{user}}</a>, <AppDate :timestamp="thread.publishedAt" />.
         <span
             style="float:right; margin-top: 2px;"
             class="hide-mobile text-faded text-small"
@@ -36,6 +36,11 @@ export default {
         PostList,
         PostEditor
     },
+    data(){
+        return {
+            user : ''
+        }
+    },
     props:{
         id:{
             required: true,
@@ -45,16 +50,16 @@ export default {
     mixins: [asyncDataStatus], 
     computed: {
         threads () {
-        return this.$store.state.threads
+            return this.$store.state.threads
         },
         posts () {
-        return this.$store.state.posts
+            return this.$store.state.posts
         },
         thread () {
-        return this.$store.getters.thread(this.id) || {}
+            return this.$store.getters.thread(this.id) || {}
         },
         threadPosts () {
-        return this.posts.filter(post => post.threadId === this.id)
+            return this.posts.filter(post => post.threadId === this.id)
         }
     },
     methods:{
@@ -76,7 +81,13 @@ export default {
         // fetch le user associé a chaque post
         const users = posts.map(post => post.userId).concat(thread.userId)
 
-        await this.fetchUsers( {ids :users})
+        await this.$store.dispatch("resetPosts");
+        
+        await this.fetchUsers({ids :users})
+
+        const user = await this.fetchUser({id : thread.userId})
+        
+        this.user = user.username
         
         this.asyncDataStatus_fetched()
     },

@@ -1,10 +1,10 @@
 <template>
-  <div v-if='asyncDateStatus_ready' class="col-full push-top">
+  <div v-if='this.asyncDataStatus_ready' class="col-full push-top">
     <h1>
       Create new thread in <i>{{ forum.name }}</i>
     </h1>
 
-    <ThreadEditor @save='save' @cancel='cancel'/>
+    <ThreadEditor @save='save' @cancel='cancel' @dirty="formIsDirty = true" @clean="formIsDirty = false" />
   </div>
 </template>
 <script>
@@ -20,6 +20,11 @@ export default {
   mixins: [asyncDataStatus], 
   props: {
     forumId: { type: String, required: true }
+  },
+  data(){
+    return{
+      formIsDirty:false,
+    }
   },
   computed:{
       forum () {
@@ -42,6 +47,12 @@ export default {
 
     this.asyncDataStatus_fetched()
 
+  },
+  beforeRouteLeave(to,from){
+    if(this.formIsDirty){
+      const confirmed = window.confirm('Are you sure you want to leave ? unsaved changes will be lost !')
+      if (!confirmed ) return false // permet de ne pas quitter la page si on ne confirme pas, sinon comportement habituel donc on quitte la page
+    }
   }
 }
 </script>

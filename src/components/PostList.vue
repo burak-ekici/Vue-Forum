@@ -93,7 +93,7 @@ export default {
         }
     },
     async created() {
-        await this.$store.dispatch("resetPosts");
+        
         this.$store.dispatch("fetchUsers", { ids: this.posts.map(post => post.userId) });
     },
     components: { PostEditor }
