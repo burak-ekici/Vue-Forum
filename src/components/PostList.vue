@@ -24,9 +24,10 @@
                 <div class='col-full'>
 
                     <PostEditor
-                     :post='post' 
-                     @save="handleUpdate" 
-                     v-if='editing === post.id'/>
+                        :post='post' 
+                        @save="handleUpdate" 
+                        v-if='editing === post.id'
+                    />
 
                     <p v-else>{{post.text}}</p>
 

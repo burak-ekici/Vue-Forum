@@ -1,7 +1,6 @@
 <template>
 <!-- component  qui liste les sujet du forum -->
 <div v-if='asyncDataStatus_ready' class="col-large push-top">
-
     <h1>
         {{thread.title}}
         <router-link v-if="thread.userId === authUser?.id" :to='{name : "ThreadEdit" , id : this.id}' class='btn-green btn-small' tag="button">

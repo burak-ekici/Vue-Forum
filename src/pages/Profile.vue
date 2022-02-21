@@ -26,6 +26,7 @@ import PostList from '@/components/PostList'
 import { mapGetters } from 'vuex'
 import UserProfileCard from '../components/UserProfileCard.vue'
 import UserProfileCardEditor from '../components/UserProfileCardEditor.vue'
+import asyncDataStatus from '@/mixins/asyncDataStatus.js'
 export default {
   components: { PostList , UserProfileCard , UserProfileCardEditor },
   props:{
@@ -34,17 +35,17 @@ export default {
       type:Boolean
     }
   },
+  mixins: [asyncDataStatus],
   computed: {
-    user(){
-      return this.$store.getters.authUser // on peux appeler le getter comme ceci
-    },
     ...mapGetters({user:'authUser'}) //  ou avec ...mapgetter
   },
   async created(){
 
     await this.$store.dispatch("fetchAuthUsersPosts")
 
-    this.$emit('ready')
+    await this.$store.dispatch('fetchAuthUsersThreads')
+
+    this.asyncDataStatus_fetched()
   }
 }
 </script>

@@ -1,7 +1,7 @@
 <template>
   <TheNavbar />
   <div class="container">
-    <router-view v-show="showPage" @ready="onPageReady" />
+    <router-view v-show="showPage" @ready="onPageReady" :key="$route.path" />  <!-- le :key='$route.path' permet de destroy et regenerer la page a chaque changement de lien car si on reste sur une même page par exemple : thread/-Vff..  et que l'on va sur thread/-Other , la page va bugué, car il ne va pas recharger la page, il faut la detruire avant  -->
     <AppSpinner v-show="!showPage" />
   </div>
 </template>
