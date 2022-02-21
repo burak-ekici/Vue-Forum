@@ -1,7 +1,7 @@
 <template>
-  <div class="container">
+  <div class="container" style="width:100%">
     <h1>My profile</h1>
-    <!-- <div class="flex-grid">
+    <div class="flex-grid">
       <div class="col-3 push-top">
         
         <UserProfileCard v-if="!edit" :user="user" />
@@ -17,17 +17,17 @@
         <hr />
         <PostList :posts="user.posts" />
       </div>
-    </div> -->
+    </div>
   </div>
+  
 </template>
 <script>
-// import PostList from '@/components/PostList'
-// import { mapGetters } from 'vuex'
-// import UserProfileCard from '../components/UserProfileCard.vue'
-// import UserProfileCardEditor from '../components/UserProfileCardEditor.vue'
-import store from '@/store/index'
+import PostList from '@/components/PostList'
+import { mapGetters } from 'vuex'
+import UserProfileCard from '../components/UserProfileCard.vue'
+import UserProfileCardEditor from '../components/UserProfileCardEditor.vue'
 export default {
-  // components: { PostList , UserProfileCard , UserProfileCardEditor },
+  components: { PostList , UserProfileCard , UserProfileCardEditor },
   props:{
     edit:{
       default:false,
@@ -37,20 +37,13 @@ export default {
   computed: {
     user(){
       return this.$store.getters.authUser // on peux appeler le getter comme ceci
-      // ...mapGetters({user:'authUser'})  ou avec ...mapgetter
-    }
-    // ...mapGetters({ user: 'authUser' }),    // user vaux le retour de la fonction authUser qui est dans le store ( getters)
+    },
+    ...mapGetters({user:'authUser'}) //  ou avec ...mapgetter
   },
-  beforeRouteEnter(to, from){   // On a pas accés a this.$store avec ces fonction du router ici donc on import le store
-    if(!store.state.authId) return {name:'Home'}
-  },
-  beforeRouteUpdate(to, from){
+  async created(){
 
-  },
-  beforeRouteLeave(to, from){
-    
-  },
-  created(){
+    await this.$store.dispatch("fetchAuthUsersPosts")
+
     this.$emit('ready')
   }
 }

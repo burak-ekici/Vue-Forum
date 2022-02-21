@@ -1,10 +1,27 @@
 import db from '../config/firebase'
-import { doc,increment, onSnapshot, collection,serverTimestamp, getDocs, getDoc,arrayUnion, writeBatch, updateDoc , setDoc} from "firebase/firestore";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword , GoogleAuthProvider , signInWithPopup} from "firebase/auth";
+import { doc,increment,query, where, onSnapshot, collection,serverTimestamp, getDocs, getDoc,arrayUnion, writeBatch, updateDoc , setDoc} from "firebase/firestore";
+import { getAuth,onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword , GoogleAuthProvider , signInWithPopup} from "firebase/auth";
 import {findById, docToResource} from "@/helpers"
 
 
 export default {
+    initAuthentication({dispatch , commit , state}){  // permet de verifier avant chaque route si l'utilisateur est conencté ou non
+        if(state.authObserverUnsubscribe)  state.authObserverUnsubscribe() // authObserverUnsubscribe est null par default , mais si quelqu'un est log, il contien un observer renvoyé par onAuthStateChange, en l'appelant il annule l'observer comme avec l'id de setInterval()
+        return new Promise((resolve)=>{
+            const auth = getAuth();
+            const unsubscribe = onAuthStateChanged(auth ,async (user) => {
+                this.dispatch('unsubscribeAuthUserSnapshot')
+                if(user){
+                    await this.dispatch('fetchAuthUser')
+                    resolve(user)
+                }else{
+                    resolve(null)
+                }
+            })
+            commit('setAuthObserverUnsubscribe' , unsubscribe)
+        })
+        
+    },
     async createPost(context , post){
 
         post.userId = context.state.authId
@@ -131,6 +148,14 @@ export default {
         context.commit('setItem',{ resource: 'posts', item : newPost})
         return docToResource(newThread) 
     },
+    async fetchAuthUsersPosts({commit , state}){
+        const ref = collection(db,'posts');
+        const q = query( ref , where('userId', '==' , state.authId))
+        const posts = await getDocs(q)
+        posts.forEach(item => {
+            commit('setItem', {resource : 'posts' , item})
+        })
+    },
     fetchCategory : ({dispatch}, {id}) => dispatch('fetchItem', { resource:'categories', id}),
     fetchCategories:({dispatch}, {id}) => dispatch('fetchItem', { resource:'categories', ids}),
     fetchThread: ({dispatch} , {id}) => dispatch('fetchItem', { resource:'threads', id}),
@@ -141,16 +166,16 @@ export default {
     fetchUsers:({dispatch} , {ids}) => dispatch('fetchItems',{resource:'users', ids}),
     fetchForum:({dispatch}, {id}) => dispatch('fetchItem', { resource:'forums', id}),
     fetchForums:({dispatch} , {ids}) => dispatch('fetchItems',{resource:'forums', ids}),
-    fetchAuthUser:({dispatch, commit}) => {
+    fetchAuthUser:async ({dispatch, commit}) => {
         const auth = getAuth();
         const userId = auth.currentUser?.uid
         if(!userId) return //empeche une erreur s'il n'y a pas d'user connecté
 
-        dispatch('fetchItem', {
+        await dispatch('fetchItem', {
             resource: 'users',
             id: userId,
             handleUnsubscribe: (unsubscribe) => {
-              commit('setAuthUserUnsubscribe', unsubscribe)
+                commit('setAuthUserUnsubscribe', unsubscribe)
             }
         })
         commit('setAuthId', userId)
@@ -161,8 +186,13 @@ export default {
         const itemSnap = await getDoc(item)
         let itemToReturn = {...itemSnap.data(), id : itemSnap.id}
         const unsubscribe = onSnapshot(doc(db, resource , id), (doc) => {
-            itemToReturn = {...doc.data(),id: doc.id};
-            context.commit('setItem', {resource , item: itemToReturn})
+            if(doc.exists){
+                itemToReturn = {...doc.data(),id: doc.id};
+                context.commit('setItem', {resource , item: itemToReturn})
+                return itemToReturn
+            }else{
+                return null
+            }
         });
         context.commit('setItem', {resource , item: itemToReturn})
         if (handleUnsubscribe) {
@@ -214,3 +244,4 @@ export default {
     }
 
 }
+
