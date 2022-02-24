@@ -119,14 +119,14 @@ export default {
       const ref = collection(db, "posts");
       let posts = postsFromComponent || [];
       if(!startAfterThisPost){
-        let q = query(ref, where("userId", "==", state.authId), orderBy('publishedAt','desc'), limit(2));
+        let q = query(ref, where("userId", "==", state.authId), orderBy('publishedAt','desc'), limit(5));
         posts = await getDocs(q);
         posts.forEach((item) => {
           commit("setItem", { resource: "posts", item }, {root:true});
         });
       }else{
         const lastVisiblePost = posts.docs[posts.docs.length -1]
-        const nextQuery = query(ref, where("userId", "==", state.authId), orderBy('publishedAt','desc'),startAfter(lastVisiblePost), limit(2));
+        const nextQuery = query(ref, where("userId", "==", state.authId), orderBy('publishedAt','desc'),startAfter(lastVisiblePost), limit(5));
         posts = await getDocs(nextQuery)
         posts.forEach((item) => {
           commit("setItem", { resource: "posts", item }, {root:true});

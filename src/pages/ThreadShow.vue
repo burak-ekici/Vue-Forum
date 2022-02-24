@@ -16,7 +16,7 @@
         >
     </p>
 
-    <PostList :posts="posts" />
+    <PostList :posts="posts" :usersPostsArray='usersPostsArray' :usersThreadsArray='usersThreadsArray' />
 
     <post-editor v-if="authUser" @save="addPost" />
 
@@ -42,7 +42,9 @@ export default {
     },
     data(){
         return {
-            user : ''
+            user : '',
+            usersPostsArray : [], // s'initialise lors de created
+            usersThreadsArray : []
         }
     },
     props:{
@@ -70,7 +72,7 @@ export default {
     methods:{
         ...mapActions('posts',['createPost', 'fetchPosts']),
         ...mapActions('threads',['fetchThread']),
-        ...mapActions('users',['fetchUser', 'fetchUsers']),
+        ...mapActions('users',['fetchUser', 'fetchUsers','usersPostsCount','usersThreadsCount']),
         addPost(eventData){
         const post = {
             ...eventData.post,
@@ -92,6 +94,11 @@ export default {
         
         await this.fetchUsers({ids :users})
 
+        this.usersPostsArray = await this.usersPostsCount({threadId : thread.id}) // renvoie un tableau avec tous les posts des utilisateurs 
+        
+        this.usersThreadsArray = await this.usersThreadsCount({threadId : thread.id}) 
+        console.log( this.usersThreadsArray)
+        
         const user = await this.fetchUser({id : thread.userId})
         
         this.user = user.username

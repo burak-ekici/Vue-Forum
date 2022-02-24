@@ -5,17 +5,26 @@ import {
   getDoc,
   updateDoc,
   setDoc,
+  query,
+  collection,
+  where,
+  orderBy,
+  getDocs,
 } from "firebase/firestore";
 
-import { docToResource , makeAppendChildToParentMutation , findById} from "@/helpers";
+import {
+  docToResource,
+  makeAppendChildToParentMutation,
+  findById,
+} from "@/helpers";
 
 export default {
-  namespaced : true,
+  namespaced: true,
   state: {
     items: [],
   },
   getters: {
-    user: (state , getters , rootState) => {
+    user: (state, getters, rootState) => {
       return (id) => {
         const user = findById(state.items, id);
 
@@ -28,16 +37,20 @@ export default {
           // le "get" permet juste de pouvoir appelé la fonction avec authUser.Posts
           // au lieu de authUser.Posts() sans le get  ... juste bon à savoir mais pas obligatoire
           get posts() {
-            return rootState.posts.items.filter((post) => post.userId === user.id);
+            return rootState.posts.items.filter(
+              (post) => post.userId === user.id
+            );
           },
           get postsCount() {
-            return this.posts.length || 0;
+            return rootState.posts.items.length || 0;
           },
           get threads() {
-            return rootState.threads.items.filter((post) => post.userId === user.id);
+            return rootState.threads.items.filter(
+              (post) => post.userId === user.id
+            );
           },
           get threadsCount() {
-            return this.threads.length || 0;
+            return rootState.threads.items.length || 0;
           },
         };
       };
@@ -59,7 +72,11 @@ export default {
       const userRef = await doc(db, "users", id);
       await setDoc(userRef, user);
       const newUser = await getDoc(userRef);
-      context.commit("setItem", { resource: "users", item: newUser }, { root : true });
+      context.commit(
+        "setItem",
+        { resource: "users", item: newUser },
+        { root: true }
+      );
       return docToResource(newUser);
     },
     async updateUser(context, user) {
@@ -76,12 +93,58 @@ export default {
 
       await updateDoc(userRef, updates);
 
-      context.commit("setItem", { resource: "users", item: user } , {root : true });
+      context.commit(
+        "setItem",
+        { resource: "users", item: user },
+        { root: true }
+      );
+    },
+    async usersPostsCount(context, { threadId }) {
+      const ref = doc(db, "threads", threadId);
+      const threadDoc = await getDoc(ref);
+      const threadToReturn = { ...threadDoc.data(), id: threadDoc.id };
+      const ThreadUsersId = [
+        ...(threadToReturn.contributors?.flat() || ""),
+        threadToReturn.userId,
+      ];
+      const idsArray = new Set(ThreadUsersId); // sans doublon si plusieurs fois commentaires de la même personne ou reponse du createur du thread
+      const usersPostsArray = [];
+      idsArray.forEach(async (userId) => {
+        const q = query(collection(db, "posts"), where("userId", "==", userId), orderBy('publishedAt'));
+        const usersPosts = await getDocs(q);
+        usersPosts.forEach((el) => {
+          const data = { ...el.data(), id: el.id };
+          usersPostsArray.push({ userId, data });
+        });
+      });
+
+      return usersPostsArray;
+    },
+    async usersThreadsCount(context , {threadId}){
+      const ref = doc(db, "threads", threadId);
+      const threadDoc = await getDoc(ref);
+      const threadToReturn = { ...threadDoc.data(), id: threadDoc.id };
+      const ThreadUsersId = [
+        ...(threadToReturn.contributors?.flat() || ""),
+        threadToReturn.userId,
+      ];
+      const idsArray = new Set(ThreadUsersId);
+      const usersThreadsArray = [];
+      idsArray.forEach(async (userId)=>{
+        const q = query(collection(db,'threads') , where('userId' , '==' , userId))
+        const usersThreads = await getDocs(q)
+        usersThreads.forEach(thread=>{
+          const data = {...thread.data(), id: thread.id}
+          usersThreadsArray.push({userId, data})
+        })
+      })
+
+      return usersThreadsArray
     },
     fetchUser: ({ dispatch }, { id }) =>
-      dispatch("fetchItem", { resource: "users", id },{ root : true }),
+      dispatch("fetchItem", { resource: "users", id }, { root: true }),
     fetchUsers: ({ dispatch }, { ids }) =>
-      dispatch("fetchItems", { resource: "users", ids },{ root : true }),
+      dispatch("fetchItems", { resource: "users", ids }, { root: true }),
   },
   mutations: {
     appendThreadToUser: makeAppendChildToParentMutation({
