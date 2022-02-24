@@ -4,6 +4,8 @@ import App from './App.vue'
 import router from './router/index'
 import store from './store/index' // permet d'acceder au store en dehors de l'instance vue
 import FontAwesome from '@/plugins/FontAwesome' // retourne une fonction
+import ClickOutsideDirective from '@/plugins/ClickOutsideDirective'
+import PageScrolling from '@/plugins/PageScrollingDirective'
 
 const forumApp = createApp(App)
 
@@ -11,9 +13,12 @@ const forumApp = createApp(App)
 
 // forumApp.use(...) attend une fonction ou objet en parametre et l'instencie vace forumApp ex : le parametre FontAweseome est une fonction prenant en paramétre (app) => app.component(fa , FontAwesomeIcon)
 // il s'instenciera par forumApp en paramétre
+// tous les paramatres son des plugins ici
 forumApp.use(router)
 forumApp.use(store)
 forumApp.use(FontAwesome)
+forumApp.use(ClickOutsideDirective)  // notre plugin de Custom Directive
+forumApp.use(PageScrolling)  // notre plugin de Custom Directive
 
 // fonction dans la doc vue.js -> section (en anglais) 'base component names ->  puis detailed explanation' 
 // Permet de chercher tous les fichier dans le dossier components qui commencent par App

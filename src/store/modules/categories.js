@@ -1,4 +1,4 @@
-import db from "../config/firebase";
+import db from "@/config/firebase";
 import { doc, onSnapshot, collection, getDocs } from "firebase/firestore";
 
 export default {
@@ -9,20 +9,20 @@ export default {
   getters: {},
   actions: {
     fetchCategory: ({ dispatch }, { id }) =>
-      dispatch("fetchItem", { resource: "categories", id }),
+      dispatch("fetchItem", { resource: "categories", id }, {root:true}),
     fetchCategories: ({ dispatch }, { id }) =>
-      dispatch("fetchItem", { resource: "categories", ids }),
+      dispatch("fetchItem", { resource: "categories", ids }, {root:true}),
     async fetchAllCategories(context) {
       const categories = [];
       // recupere tous les threads de firebase
       const allCategories = await getDocs(collection(db, "categories"));
       allCategories.forEach((document) => {
         const item = { id: document.id, ...document.data() };
-        context.commit("setItem", { resource: "categories", item });
+        context.commit("setItem", { resource: "categories", item }, {root:true});
         categories.push({ ...document.data() });
         onSnapshot(doc(db, "categories", document.id), (el) => {
           const item = { id: el.id, ...el.data() };
-          context.commit("setItem", { resource: "categories", item });
+          context.commit("setItem", { resource: "categories", item }, {root:true});
           const index = categories.indexOf(el.data());
           if (index != -1) {
             categories.push({ ...el.data() });

@@ -1,4 +1,4 @@
-import db from "../config/firebase";
+import db from "@/config/firebase";
 import {
   doc,
   serverTimestamp,
@@ -7,7 +7,7 @@ import {
   setDoc,
 } from "firebase/firestore";
 
-import { docToResource } from "@/helpers";
+import { docToResource , makeAppendChildToParentMutation , findById} from "@/helpers";
 
 export default {
   namespaced : true,
@@ -15,9 +15,9 @@ export default {
     items: [],
   },
   getters: {
-    user: (state) => {
+    user: (state , getters , rootState) => {
       return (id) => {
-        const user = findById(state.users, id);
+        const user = findById(state.items, id);
 
         if (!user) {
           return null;
@@ -28,13 +28,13 @@ export default {
           // le "get" permet juste de pouvoir appelé la fonction avec authUser.Posts
           // au lieu de authUser.Posts() sans le get  ... juste bon à savoir mais pas obligatoire
           get posts() {
-            return state.posts.filter((post) => post.userId === user.id);
+            return rootState.posts.items.filter((post) => post.userId === user.id);
           },
           get postsCount() {
             return this.posts.length || 0;
           },
           get threads() {
-            return state.threads.filter((post) => post.userId === user.id);
+            return rootState.threads.items.filter((post) => post.userId === user.id);
           },
           get threadsCount() {
             return this.threads.length || 0;
@@ -59,7 +59,7 @@ export default {
       const userRef = await doc(db, "users", id);
       await setDoc(userRef, user);
       const newUser = await getDoc(userRef);
-      context.commit("setItem", { resource: "users", item: newUser });
+      context.commit("setItem", { resource: "users", item: newUser }, { root : true });
       return docToResource(newUser);
     },
     async updateUser(context, user) {
@@ -76,12 +76,12 @@ export default {
 
       await updateDoc(userRef, updates);
 
-      context.commit("setItem", { resource: "users", item: user });
+      context.commit("setItem", { resource: "users", item: user } , {root : true });
     },
     fetchUser: ({ dispatch }, { id }) =>
-      dispatch("fetchItem", { resource: "users", id }),
+      dispatch("fetchItem", { resource: "users", id },{ root : true }),
     fetchUsers: ({ dispatch }, { ids }) =>
-      dispatch("fetchItems", { resource: "users", ids }),
+      dispatch("fetchItems", { resource: "users", ids },{ root : true }),
   },
   mutations: {
     appendThreadToUser: makeAppendChildToParentMutation({

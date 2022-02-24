@@ -1,115 +1,114 @@
 <template>
-  <div class="profile-card">
-    <form @submit.prevent="save">
-      <p class="text-center">
-        <img
-          :src="user.avatar"
-          :alt="`${user.name} profile picture`"
-          class="avatar-xlarge img-update"
-        />
-      </p>
+    <div class="profile-card">
+        <form @submit.prevent="save">
+            <p class="text-center">
+                <img
+                    :src="user.avatar"
+                    :alt="`${user.name} profile picture`"
+                    class="avatar-xlarge img-update"
+                />
+            </p>
 
-      <div class="form-group">
-        <input
-          v-model="activeUser.username"
-          type="text"
-          placeholder="Username"
-          class="form-input text-lead text-bold"
-        />
-      </div>
+            <div class="form-group">
+                <input
+                    v-model="activeUser.username"
+                    type="text"
+                    placeholder="Username"
+                    class="form-input text-lead text-bold"
+                />
+            </div>
 
-      <div class="form-group">
-        <input
-          v-model="activeUser.name"
-          type="text"
-          placeholder="Full Name"
-          class="form-input text-lead"
-        />
-      </div>
+            <div class="form-group">
+                <input
+                    v-model="activeUser.name"
+                    type="text"
+                    placeholder="Full Name"
+                    class="form-input text-lead"
+                />
+            </div>
 
-      <div class="form-group">
-        <label for="user_bio">Bio</label>
-        <textarea
-          v-model="activeUser.bio"
-          class="form-input"
-          id="user_bio"
-          placeholder="Write a few words about yourself."
-        ></textarea>
-      </div>
+            <div class="form-group">
+                <label for="user_bio">Bio</label>
+                <textarea
+                    v-model="activeUser.bio"
+                    class="form-input"
+                    id="user_bio"
+                    placeholder="Write a few words about yourself."
+                ></textarea>
+            </div>
 
-      <div class="stats">
-        <span>{{ user.postsCount }} posts</span>
-        <span>{{ user.threadsCount }} threads</span>
-      </div>
+            <div class="stats">
+                <span>{{ user.postsCount }} posts</span>
+                <span>{{ user.threadsCount }} threads</span>
+            </div>
 
-      <hr />
+            <hr />
 
-      <div class="form-group">
-        <label class="form-label" for="user_website">Website</label>
-        <input
-          v-model="activeUser.website"
-          autocomplete="off"
-          class="form-input"
-          id="user_website"
-        />
-      </div>
+            <div class="form-group">
+                <label class="form-label" for="user_website">Website</label>
+                <input
+                    v-model="activeUser.website"
+                    autocomplete="off"
+                    class="form-input"
+                    id="user_website"
+                />
+            </div>
 
-      <div class="form-group">
-        <label class="form-label" for="user_email">Email</label>
-        <input
-          v-model="activeUser.email"
-          autocomplete="off"
-          class="form-input"
-          id="user_email"
-        />
-      </div>
+            <div class="form-group">
+                <label class="form-label" for="user_email">Email</label>
+                <input
+                    v-model="activeUser.email"
+                    autocomplete="off"
+                    class="form-input"
+                    id="user_email"
+                />
+            </div>
 
-      <div class="form-group">
-        <label class="form-label" for="user_location">Location</label>
-        <input
-          v-model="activeUser.location"
-          autocomplete="off"
-          class="form-input"
-          id="user_location"
-        />
-      </div>
+            <div class="form-group">
+                <label class="form-label" for="user_location">Location</label>
+                <input
+                    v-model="activeUser.location"
+                    autocomplete="off"
+                    class="form-input"
+                    id="user_location"
+                />
+            </div>
 
-      <div class="btn-group space-between">
-        <button class="btn-ghost" @click="cancel">Cancel</button>
-        <button type="submit" class="btn-blue">Save</button>
-      </div>
-    </form>
-  </div>
+            <div class="btn-group space-between">
+                <button class="btn-ghost" @click="cancel">Cancel</button>
+                <button type="submit" class="btn-blue">Save</button>
+            </div>
+        </form>
+    </div>
 </template>
 
 <script>
 export default {
-  props: {
-    user: {
-      type: Object,
-      required: true
-    }
-  },
-  data () {
-    return {
-      activeUser: { ...this.user }
-    }
-  },
-  methods: {
-    save () {
-      this.$store.dispatch('updateUser', { ...this.activeUser })
-      this.$router.push({ name: 'Profile' })
+    props: {
+        user: {
+            type: Object,
+            required: true
+        }
     },
-    cancel(){
-      this.$router.push({ name: 'Profile' })
+    data() {
+        return {
+            activeUser: { ...this.user }
+        }
+    },
+    methods: {
+        save() {
+            this.$store.dispatch('users/updateUser', { ...this.activeUser })
+            this.$router.push({ name: 'Profile' })
+        },
+        cancel() {
+            this.$router.push({ name: 'Profile' })
+        }
     }
-  }
 }
 </script>
 
 <style scoped>
 @charset "UTF-8";
-
 
 .post-list {
     margin-top: 20px;
@@ -210,7 +209,9 @@ export default {
     word-break: break-word;
 }
 
-.post-content h1, .post-content h2, .post-content h3 {
+.post-content h1,
+.post-content h2,
+.post-content h3 {
     margin-bottom: 0;
 }
 
@@ -279,7 +280,6 @@ export default {
 }
 
 .post-content blockquote.small {
-
     position: relative;
     flex-direction: column;
     border: 2px solid rgba(152, 152, 152, 0.15);
@@ -343,7 +343,7 @@ export default {
     font-weight: 100;
     font-style: italic;
     font-size: 17px;
-    letter-spacing: .15px;
+    letter-spacing: 0.15px;
 }
 
 .post-content blockquote.simple::before {
@@ -379,11 +379,13 @@ export default {
 }
 
 body {
-    background-color: #F6F8FF;
+    background-color: #f6f8ff;
     min-height: 100vh;
 }
 
-*, *:after, *:before {
+*,
+*:after,
+*:before {
     box-sizing: border-box;
 }
 
@@ -419,7 +421,7 @@ figure {
 figcaption {
     display: block;
     text-align: center;
-    font-size: .8rem;
+    font-size: 0.8rem;
 }
 
 .list-title {
@@ -443,7 +445,13 @@ figcaption {
     color: #89c6af;
 }
 
-.img-round, .avatar, .avatar-xsmall, .avatar-small, .avatar-medium, .avatar-large, .avatar-xlarge {
+.img-round,
+.avatar,
+.avatar-xsmall,
+.avatar-small,
+.avatar-medium,
+.avatar-large,
+.avatar-xlarge {
     border-radius: 50%;
     max-width: 100%;
 }
@@ -487,7 +495,7 @@ figcaption {
 }
 
 .forum-list .forum-listing .forum-details ul.subforums::before {
-    content: '⌙';
+    content: "⌙";
     margin-right: 5px;
 }
 
@@ -495,9 +503,13 @@ figcaption {
     display: inline;
 }
 
-.forum-list .forum-listing .forum-details ul.subforums.subforums li:not(:last-of-type)::after {
-    content: '\f111';
-    font-family: 'FontAwesome';
+.forum-list
+    .forum-listing
+    .forum-details
+    ul.subforums.subforums
+    li:not(:last-of-type)::after {
+    content: "\f111";
+    font-family: "FontAwesome";
     font-size: 4px;
     position: relative;
     top: -3px;
@@ -681,7 +693,7 @@ figcaption {
 }
 
 .pagination button:hover {
-    background: #57AD8D;
+    background: #57ad8d;
 }
 
 .pagination button:disabled {
@@ -700,21 +712,24 @@ figcaption {
 }
 
 @keyframes shake {
-    10%, 90% {
+    10%,
+    90% {
         transform: translate3d(-1px, 0, 0);
     }
-    20%, 80% {
+    20%,
+    80% {
         transform: translate3d(2px, 0, 0);
     }
-    30%, 50%, 70% {
+    30%,
+    50%,
+    70% {
         transform: translate3d(-4px, 0, 0);
     }
-    40%, 60% {
+    40%,
+    60% {
         transform: translate3d(4px, 0, 0);
     }
 }
-
-
 
 .profile-card {
     padding: 10px 20px 20px 20px;
@@ -847,7 +862,7 @@ span.offline::before {
 }
 
 span.online {
-    color: #57AD8D;
+    color: #57ad8d;
 }
 
 span.online::before {
@@ -909,7 +924,15 @@ span.online::before {
     }
 }
 
-.text-faded, .forum-stats ul li, .thread-list .thread .created_at, .post-content blockquote.big .author span.time, .post-content blockquote.small .author .time, .post-content blockquote.simple .author, .activity-list .activity .activity-header .title span, .activity-list .activity .thread-details, span.offline {
+.text-faded,
+.forum-stats ul li,
+.thread-list .thread .created_at,
+.post-content blockquote.big .author span.time,
+.post-content blockquote.small .author .time,
+.post-content blockquote.simple .author,
+.activity-list .activity .activity-header .title span,
+.activity-list .activity .thread-details,
+span.offline {
     color: rgba(84, 84, 84, 0.7);
 }
 
@@ -933,70 +956,197 @@ h2 {
     }
 }
 
-.text-lead, .forum-list .forum-listing .threads-count .count, .profile-card .stats span, .modal-container .modal .modal-header .title {
+.text-lead,
+.forum-list .forum-listing .threads-count .count,
+.profile-card .stats span,
+.modal-container .modal .modal-header .title {
     font-size: 26px;
     line-height: 1.5;
     font-weight: 300;
 }
 
 @media (min-width: 240px) and (max-width: 720px) {
-    .text-lead, .forum-list .forum-listing .threads-count .count, .profile-card .stats span, .modal-container .modal .modal-header .title {
+    .text-lead,
+    .forum-list .forum-listing .threads-count .count,
+    .profile-card .stats span,
+    .modal-container .modal .modal-header .title {
         font-size: 22px;
     }
 }
 
-.text, p, .text-xsmall, .thread-list .thread .created_at, .pagination, .post-content blockquote.small .author .time, .post-content blockquote.simple .author .time, .activity-list .activity .thread-details, span.offline, span.online, .btn-xsmall, .btn-brown, ul.breadcrumbs li:not(:last-of-type)::after, .text-small, .forum-list .forum-listing .forum-details ul.subforums, .post-content blockquote.big .author, .post-content blockquote.small .author a, .post-content blockquote.simple .author, .activity-list .activity .activity-header .title span, .btn-small, ul.breadcrumbs li, .text-large, .list-title, .forum-stats ul li, .profile-card .user-website, .activity-list .activity .activity-header .title, .btn-large, .text-xlarge, .btn-xlarge, .btn, .btn-blue, .btn-blue-outlined, .btn-brown-outlined, .btn-green, .btn-green-outlined, .btn-red, .btn-red-outlined, .btn-ghost {
+.text,
+p,
+.text-xsmall,
+.thread-list .thread .created_at,
+.pagination,
+.post-content blockquote.small .author .time,
+.post-content blockquote.simple .author .time,
+.activity-list .activity .thread-details,
+span.offline,
+span.online,
+.btn-xsmall,
+.btn-brown,
+ul.breadcrumbs li:not(:last-of-type)::after,
+.text-small,
+.forum-list .forum-listing .forum-details ul.subforums,
+.post-content blockquote.big .author,
+.post-content blockquote.small .author a,
+.post-content blockquote.simple .author,
+.activity-list .activity .activity-header .title span,
+.btn-small,
+ul.breadcrumbs li,
+.text-large,
+.list-title,
+.forum-stats ul li,
+.profile-card .user-website,
+.activity-list .activity .activity-header .title,
+.btn-large,
+.text-xlarge,
+.btn-xlarge,
+.btn,
+.btn-blue,
+.btn-blue-outlined,
+.btn-brown-outlined,
+.btn-green,
+.btn-green-outlined,
+.btn-red,
+.btn-red-outlined,
+.btn-ghost {
     font-size: 16px;
     line-height: 1.5;
 }
 
 @media (min-width: 240px) and (max-width: 720px) {
-    .text, p, .text-xsmall, .thread-list .thread .created_at, .pagination, .post-content blockquote.small .author .time, .post-content blockquote.simple .author .time, .activity-list .activity .thread-details, span.offline, span.online, .btn-xsmall, .btn-brown, ul.breadcrumbs li:not(:last-of-type)::after, .text-small, .forum-list .forum-listing .forum-details ul.subforums, .post-content blockquote.big .author, .post-content blockquote.small .author a, .post-content blockquote.simple .author, .activity-list .activity .activity-header .title span, .btn-small, ul.breadcrumbs li, .text-large, .list-title, .forum-stats ul li, .profile-card .user-website, .activity-list .activity .activity-header .title, .btn-large, .text-xlarge, .btn-xlarge, .btn, .btn-blue, .btn-blue-outlined, .btn-brown-outlined, .btn-green, .btn-green-outlined, .btn-red, .btn-red-outlined, .btn-ghost {
+    .text,
+    p,
+    .text-xsmall,
+    .thread-list .thread .created_at,
+    .pagination,
+    .post-content blockquote.small .author .time,
+    .post-content blockquote.simple .author .time,
+    .activity-list .activity .thread-details,
+    span.offline,
+    span.online,
+    .btn-xsmall,
+    .btn-brown,
+    ul.breadcrumbs li:not(:last-of-type)::after,
+    .text-small,
+    .forum-list .forum-listing .forum-details ul.subforums,
+    .post-content blockquote.big .author,
+    .post-content blockquote.small .author a,
+    .post-content blockquote.simple .author,
+    .activity-list .activity .activity-header .title span,
+    .btn-small,
+    ul.breadcrumbs li,
+    .text-large,
+    .list-title,
+    .forum-stats ul li,
+    .profile-card .user-website,
+    .activity-list .activity .activity-header .title,
+    .btn-large,
+    .text-xlarge,
+    .btn-xlarge,
+    .btn,
+    .btn-blue,
+    .btn-blue-outlined,
+    .btn-brown-outlined,
+    .btn-green,
+    .btn-green-outlined,
+    .btn-red,
+    .btn-red-outlined,
+    .btn-ghost {
         font-size: 15px;
     }
 }
 
-.text-xsmall, .thread-list .thread .created_at, .pagination, .post-content blockquote.small .author .time, .post-content blockquote.simple .author .time, .activity-list .activity .thread-details, span.offline, span.online, .btn-xsmall, .btn-brown, ul.breadcrumbs li:not(:last-of-type)::after {
+.text-xsmall,
+.thread-list .thread .created_at,
+.pagination,
+.post-content blockquote.small .author .time,
+.post-content blockquote.simple .author .time,
+.activity-list .activity .thread-details,
+span.offline,
+span.online,
+.btn-xsmall,
+.btn-brown,
+ul.breadcrumbs li:not(:last-of-type)::after {
     font-size: 13px;
 }
 
 @media (min-width: 240px) and (max-width: 720px) {
-    .text-xsmall, .thread-list .thread .created_at, .pagination, .post-content blockquote.small .author .time, .post-content blockquote.simple .author .time, .activity-list .activity .thread-details, span.offline, span.online, .btn-xsmall, .btn-brown, ul.breadcrumbs li:not(:last-of-type)::after {
+    .text-xsmall,
+    .thread-list .thread .created_at,
+    .pagination,
+    .post-content blockquote.small .author .time,
+    .post-content blockquote.simple .author .time,
+    .activity-list .activity .thread-details,
+    span.offline,
+    span.online,
+    .btn-xsmall,
+    .btn-brown,
+    ul.breadcrumbs li:not(:last-of-type)::after {
         font-size: 12px;
     }
 }
 
-.text-small, .forum-list .forum-listing .forum-details ul.subforums, .post-content blockquote.big .author, .post-content blockquote.small .author a, .post-content blockquote.simple .author, .activity-list .activity .activity-header .title span, .btn-small, ul.breadcrumbs li {
+.text-small,
+.forum-list .forum-listing .forum-details ul.subforums,
+.post-content blockquote.big .author,
+.post-content blockquote.small .author a,
+.post-content blockquote.simple .author,
+.activity-list .activity .activity-header .title span,
+.btn-small,
+ul.breadcrumbs li {
     font-size: 15px;
 }
 
 @media (min-width: 240px) and (max-width: 720px) {
-    .text-small, .forum-list .forum-listing .forum-details ul.subforums, .post-content blockquote.big .author, .post-content blockquote.small .author a, .post-content blockquote.simple .author, .activity-list .activity .activity-header .title span, .btn-small, ul.breadcrumbs li {
+    .text-small,
+    .forum-list .forum-listing .forum-details ul.subforums,
+    .post-content blockquote.big .author,
+    .post-content blockquote.small .author a,
+    .post-content blockquote.simple .author,
+    .activity-list .activity .activity-header .title span,
+    .btn-small,
+    ul.breadcrumbs li {
         font-size: 14px;
     }
 }
 
-.text-large, .list-title, .forum-stats ul li, .profile-card .user-website, .activity-list .activity .activity-header .title, .btn-large {
+.text-large,
+.list-title,
+.forum-stats ul li,
+.profile-card .user-website,
+.activity-list .activity .activity-header .title,
+.btn-large {
     font-size: 18px;
 }
 
 @media (min-width: 240px) and (max-width: 720px) {
-    .text-large, .list-title, .forum-stats ul li, .profile-card .user-website, .activity-list .activity .activity-header .title, .btn-large {
+    .text-large,
+    .list-title,
+    .forum-stats ul li,
+    .profile-card .user-website,
+    .activity-list .activity .activity-header .title,
+    .btn-large {
         font-size: 17px;
     }
 }
 
-.text-xlarge, .btn-xlarge {
+.text-xlarge,
+.btn-xlarge {
     font-size: 22px;
 }
 
 @media (min-width: 240px) and (max-width: 720px) {
-    .text-xlarge, .btn-xlarge {
+    .text-xlarge,
+    .btn-xlarge {
         font-size: 20px;
     }
 }
 
-.text-bold, .activity-list .activity .activity-header .title {
+.text-bold,
+.activity-list .activity .activity-header .title {
     font-weight: bold;
 }
 
@@ -1012,11 +1162,14 @@ h2 {
     text-decoration: line-through;
 }
 
-.text-center, .profile-card .stats span, .profile-card .user-website {
+.text-center,
+.profile-card .stats span,
+.profile-card .user-website {
     text-align: center;
 }
 
-.text-left, .activity-list .activity .activity-header .title {
+.text-left,
+.activity-list .activity .activity-header .title {
     text-align: left;
 }
 
@@ -1035,7 +1188,7 @@ ul {
 
 .navbar {
     width: 100%;
-    display:flex;
+    display: flex;
     flex-direction: row-reverse;
     justify-content: space-between;
 }
@@ -1047,17 +1200,20 @@ ul {
     /*height: 100%;*/
 }
 
-.navbar-item, .navbar-mobile-item {
+.navbar-item,
+.navbar-mobile-item {
     display: inline-block;
     border-right: 1px solid #3c4d6a;
     vertical-align: middle;
 }
 
-ul .navbar-item:last-child, ul .navbar-mobile-item:last-child {
+ul .navbar-item:last-child,
+ul .navbar-mobile-item:last-child {
     border-right: none;
 }
 
-.navbar-item a, .navbar-mobile-item a {
+.navbar-item a,
+.navbar-mobile-item a {
     color: white;
     padding: 10px 20px;
     text-decoration: none;
@@ -1065,22 +1221,26 @@ ul .navbar-item:last-child, ul .navbar-mobile-item:last-child {
 }
 
 @media (min-width: 240px) and (max-width: 720px) {
-    .navbar-item a, .navbar-mobile-item a {
+    .navbar-item a,
+    .navbar-mobile-item a {
         padding: 10px 0px;
     }
 }
 
-.navbar-item a:hover, .navbar-mobile-item a:hover {
-    color: #57AD8D;
-    transition: all .3s ease;
+.navbar-item a:hover,
+.navbar-mobile-item a:hover {
+    color: #57ad8d;
+    transition: all 0.3s ease;
 }
 
-.navbar-item a:active, .navbar-mobile-item a:active {
-    color: #57AD8D;
+.navbar-item a:active,
+.navbar-mobile-item a:active {
+    color: #57ad8d;
 }
 
 @media (min-width: 240px) and (max-width: 720px) {
-    .navbar-item, .navbar-mobile-item {
+    .navbar-item,
+    .navbar-mobile-item {
         display: block;
         border: none;
         margin: 20px 0;
@@ -1108,7 +1268,8 @@ ul .navbar-item:last-child, ul .navbar-mobile-item:last-child {
         border-bottom-left-radius: 5px;
     }
 
-    .navbar-open .navbar-item, .navbar-open .navbar-mobile-item {
+    .navbar-open .navbar-item,
+    .navbar-open .navbar-mobile-item {
         margin: 6px 0;
     }
 
@@ -1121,12 +1282,13 @@ ul .navbar-item:last-child, ul .navbar-mobile-item:last-child {
     }
 }
 
-.signs .navbar-item, .signs .navbar-mobile-item {
+.signs .navbar-item,
+.signs .navbar-mobile-item {
     border-right: none;
 }
 
 .a-active {
-    color: #57AD8D;
+    color: #57ad8d;
 }
 
 .icon-profile {
@@ -1145,7 +1307,7 @@ ul .navbar-item:last-child, ul .navbar-mobile-item:last-child {
 }
 
 .navbar-user a:hover .icon-profile {
-    transition: all .4s ease;
+    transition: all 0.4s ease;
     transform: rotate(-180deg);
 }
 
@@ -1299,25 +1461,29 @@ header > a.logo {
     display: block;
 }
 
-.dropdown-menu, #user-dropdown > .dropdown-menu {
+.dropdown-menu,
+#user-dropdown > .dropdown-menu {
     display: block;
     background: white;
     padding: 20px;
     position: relative;
 }
 
-.dropdown-menu-item, #user-dropdown > .dropdown-menu > .dropdown-menu-item {
+.dropdown-menu-item,
+#user-dropdown > .dropdown-menu > .dropdown-menu-item {
     margin-bottom: 5px;
 }
 
-.dropdown-menu-item a, #user-dropdown > .dropdown-menu > .dropdown-menu-item a {
+.dropdown-menu-item a,
+#user-dropdown > .dropdown-menu > .dropdown-menu-item a {
     display: block;
-    color: #57AD8D;
+    color: #57ad8d;
     font-size: 16px;
     transition: all ease 0.6s;
 }
 
-.dropdown-menu-item a:hover, #user-dropdown > .dropdown-menu > .dropdown-menu-item a:hover {
+.dropdown-menu-item a:hover,
+#user-dropdown > .dropdown-menu > .dropdown-menu-item a:hover {
     color: #41826a;
 }
 
@@ -1340,9 +1506,9 @@ header > a.logo {
 }
 
 #user-dropdown a {
-    color: #57AD8D;
+    color: #57ad8d;
     text-decoration: none;
-    transition: all .6s ease;
+    transition: all 0.6s ease;
 }
 
 #user-dropdown a:hover {
@@ -1375,7 +1541,7 @@ header > a.logo {
 
 .mentionsList li:hover {
     cursor: pointer;
-    background-color: #57AD8D;
+    background-color: #57ad8d;
 }
 
 .mentionsList li:not(:last-of-type) {
@@ -1424,7 +1590,7 @@ form {
 
 .form-input:disabled {
     cursor: no-drop;
-    background: #F5F8FE;
+    background: #f5f8fe;
     color: #bbbbbb;
 }
 
@@ -1446,7 +1612,7 @@ form {
 }
 
 .form-input:invalid {
-    border-color: #C82543;
+    border-color: #c82543;
 }
 
 .form-input:invalid ~ .form-error {
@@ -1468,7 +1634,7 @@ textarea.form-input {
 }
 
 .input-error {
-    border-color: #C82543;
+    border-color: #c82543;
 }
 
 .input-error ~ .form-error {
@@ -1477,7 +1643,7 @@ textarea.form-input {
 
 .form-error {
     background: #f4d3d9;
-    color: #C82543;
+    color: #c82543;
     font-size: 0.8em;
     float: left;
     border-radius: 100px;
@@ -1497,13 +1663,15 @@ textarea.form-input {
     display: inline-block;
 }
 
-.form-label, .form-group > label {
+.form-label,
+.form-group > label {
     margin-bottom: 5px;
     display: inline-block;
     color: #767676;
 }
 
-.form-label-password, .form-group > label-password {
+.form-label-password,
+.form-group > label-password {
     margin-bottom: 0px;
 }
 
@@ -1554,7 +1722,16 @@ button {
     appearance: none;
 }
 
-.btn, .btn-blue, .btn-blue-outlined, .btn-brown, .btn-brown-outlined, .btn-green, .btn-green-outlined, .btn-red, .btn-red-outlined, .btn-ghost {
+.btn,
+.btn-blue,
+.btn-blue-outlined,
+.btn-brown,
+.btn-brown-outlined,
+.btn-green,
+.btn-green-outlined,
+.btn-red,
+.btn-red-outlined,
+.btn-ghost {
     padding: 15px 30px;
     border-radius: 5px;
     border: none;
@@ -1562,21 +1739,59 @@ button {
     outline: 0;
 }
 
-.btn:hover, .btn-blue:hover, .btn-blue-outlined:hover, .btn-brown:hover, .btn-brown-outlined:hover, .btn-green:hover, .btn-green-outlined:hover, .btn-red:hover, .btn-red-outlined:hover, .btn-ghost:hover {
+.btn:hover,
+.btn-blue:hover,
+.btn-blue-outlined:hover,
+.btn-brown:hover,
+.btn-brown-outlined:hover,
+.btn-green:hover,
+.btn-green-outlined:hover,
+.btn-red:hover,
+.btn-red-outlined:hover,
+.btn-ghost:hover {
     transition: all 0.4s ease;
 }
 
 @media (min-width: 240px) and (max-width: 720px) {
-    .btn, .btn-blue, .btn-blue-outlined, .btn-brown, .btn-brown-outlined, .btn-green, .btn-green-outlined, .btn-red, .btn-red-outlined, .btn-ghost {
+    .btn,
+    .btn-blue,
+    .btn-blue-outlined,
+    .btn-brown,
+    .btn-brown-outlined,
+    .btn-green,
+    .btn-green-outlined,
+    .btn-red,
+    .btn-red-outlined,
+    .btn-ghost {
         padding: 10px 20px;
     }
 }
 
-.btn:disabled, .btn-blue:disabled, .btn-blue-outlined:disabled, .btn-brown:disabled, .btn-brown-outlined:disabled, .btn-green:disabled, .btn-green-outlined:disabled, .btn-red:disabled, .btn-red-outlined:disabled, .btn-ghost:disabled, .btn-disabled {
+.btn:disabled,
+.btn-blue:disabled,
+.btn-blue-outlined:disabled,
+.btn-brown:disabled,
+.btn-brown-outlined:disabled,
+.btn-green:disabled,
+.btn-green-outlined:disabled,
+.btn-red:disabled,
+.btn-red-outlined:disabled,
+.btn-ghost:disabled,
+.btn-disabled {
     cursor: default;
 }
 
-.btn:disabled:hover, .btn-blue:disabled:hover, .btn-blue-outlined:disabled:hover, .btn-brown:disabled:hover, .btn-brown-outlined:disabled:hover, .btn-green:disabled:hover, .btn-green-outlined:disabled:hover, .btn-red:disabled:hover, .btn-red-outlined:disabled:hover, .btn-ghost:disabled:hover, .btn-disabled:hover {
+.btn:disabled:hover,
+.btn-blue:disabled:hover,
+.btn-blue-outlined:disabled:hover,
+.btn-brown:disabled:hover,
+.btn-brown-outlined:disabled:hover,
+.btn-green:disabled:hover,
+.btn-green-outlined:disabled:hover,
+.btn-red:disabled:hover,
+.btn-red-outlined:disabled:hover,
+.btn-ghost:disabled:hover,
+.btn-disabled:hover {
     cursor: default;
     color: white;
 }
@@ -1604,7 +1819,7 @@ button {
 .btn-circle {
     height: 60px;
     width: 60px;
-    background: #C82543;
+    background: #c82543;
     border-radius: 50%;
     padding: 0px;
     font-size: 36px;
@@ -1692,7 +1907,7 @@ button {
 
 .btn-green {
     color: white;
-    background: #57AD8D;
+    background: #57ad8d;
 }
 
 .btn-green:hover:not(:disabled):not(.btn-disabled) {
@@ -1701,18 +1916,18 @@ button {
 }
 
 .btn-green-outlined {
-    color: #57AD8D;
-    box-shadow: inset 0px 0px 0px 1.6px #57AD8D;
+    color: #57ad8d;
+    box-shadow: inset 0px 0px 0px 1.6px #57ad8d;
 }
 
 .btn-green-outlined:hover {
     color: white;
-    background: #57AD8D;
+    background: #57ad8d;
 }
 
 .btn-red {
     color: white;
-    background: #C82543;
+    background: #c82543;
 }
 
 .btn-red:hover:not(:disabled):not(.btn-disabled) {
@@ -1721,18 +1936,18 @@ button {
 }
 
 .btn-red-outlined {
-    color: #C82543;
-    box-shadow: inset 0px 0px 0px 1.6px #C82543;
+    color: #c82543;
+    box-shadow: inset 0px 0px 0px 1.6px #c82543;
 }
 
 .btn-red-outlined:hover {
     color: white;
-    background: #C82543;
+    background: #c82543;
 }
 
 .btn-green {
     color: white;
-    background: #57AD8D;
+    background: #57ad8d;
 }
 
 .btn-green:hover:not(:disabled):not(.btn-disabled) {
@@ -1742,7 +1957,7 @@ button {
 
 .btn-red {
     color: white;
-    background: #C82543;
+    background: #c82543;
 }
 
 .btn-red:hover:not(:disabled):not(.btn-disabled) {
@@ -1773,7 +1988,7 @@ button {
     border: none;
     color: #fff;
     cursor: pointer;
-    font-family: 'Open sans', sans-serif;
+    font-family: "Open sans", sans-serif;
     font-size: 18px;
     padding: 0 25px;
     right: 4px;
@@ -1839,7 +2054,7 @@ button {
 }
 
 .link {
-    color: #57AD8D;
+    color: #57ad8d;
     text-decoration: underline;
     transition: all ease 0.4s;
 }
@@ -1852,7 +2067,8 @@ button {
     outline: 0;
 }
 
-.form-actions, .btn-group {
+.form-actions,
+.btn-group {
     display: flex;
     justify-content: flex-end;
     flex-basis: 100%;
@@ -1860,16 +2076,19 @@ button {
     margin-bottom: 10px;
 }
 
-.form-actions > *:not(:last-child), .btn-group > *:not(:last-child) {
+.form-actions > *:not(:last-child),
+.btn-group > *:not(:last-child) {
     margin-right: 10px;
 }
 
 @media (min-width: 240px) and (max-width: 720px) {
-    .form-actions, .btn-group {
+    .form-actions,
+    .btn-group {
         flex-wrap: wrap;
     }
 
-    .form-actions > *:not(.btn-ghost), .btn-group > *:not(.btn-ghost) {
+    .form-actions > *:not(.btn-ghost),
+    .btn-group > *:not(.btn-ghost) {
         flex: 1 1;
         margin-bottom: 5px;
     }
@@ -1894,11 +2113,11 @@ button {
 }
 
 .alert-error {
-    background: #C82543;
+    background: #c82543;
 }
 
 .alert-success {
-    background: #57AD8D;
+    background: #57ad8d;
 }
 
 .alert-info {
@@ -2069,14 +2288,14 @@ ul.breadcrumbs li {
 }
 
 ul.breadcrumbs li:not(:last-of-type)::after {
-    content: '\f105';
+    content: "\f105";
     font-family: FontAwesome;
     margin: 0px 4px;
     opacity: 0.6;
 }
 
 ul.breadcrumbs li a {
-    color: #57AD8D;
+    color: #57ad8d;
     text-decoration: none;
     opacity: 0.7;
 }
@@ -2105,7 +2324,7 @@ ul.breadcrumbs li a:hover {
     flex-wrap: wrap;
     position: fixed;
     bottom: 20px;
-    box-shadow: 0px 0px 300px #ADADAD;
+    box-shadow: 0px 0px 300px #adadad;
     padding: 0 5px;
     border-radius: 5px;
     background-color: #313131;
@@ -2185,7 +2404,7 @@ ul.breadcrumbs li a:hover {
     }
 
     #moderation ul.toolbar li.close-toolbar .fa::before {
-        content: '\f107';
+        content: "\f107";
         font-family: FontAwesome;
     }
 }
@@ -2198,7 +2417,8 @@ ul.breadcrumbs li a:hover {
     opacity: 1;
 }
 
-#moderation ul.toolbar-collapsed li, #moderation ul.toolbar-collapsed li.close-toolbar {
+#moderation ul.toolbar-collapsed li,
+#moderation ul.toolbar-collapsed li.close-toolbar {
     display: none;
 }
 
@@ -2232,7 +2452,7 @@ ul.breadcrumbs li a:hover {
     }
 
     #moderation ul.toolbar-collapsed li.open-toolbar a::before {
-        content: '\f106';
+        content: "\f106";
         font-family: FontAwesome;
         font-size: 30px;
     }
@@ -2265,7 +2485,7 @@ ul.breadcrumbs li a:hover {
     width: 50vw;
     max-width: 550px;
     min-height: 25vh;
-    background: #F5F8FE;
+    background: #f5f8fe;
     background: #fcfdff;
     background-color: white;
     border-radius: 8px;
@@ -2288,7 +2508,8 @@ ul.breadcrumbs li a:hover {
     padding: 0;
 }
 
-.modal-container .modal .modal-header, .modal-container .modal .modal-footer {
+.modal-container .modal .modal-header,
+.modal-container .modal .modal-footer {
     padding: 15px;
     flex-basis: 100%;
 }
@@ -2319,7 +2540,7 @@ a.close {
     top: 10px;
     color: #263959;
     font-size: 22px;
-    opacity: .7;
+    opacity: 0.7;
 }
 
 a.close:hover {
@@ -2328,7 +2549,7 @@ a.close:hover {
 }
 
 body {
-    font-family: 'Open Sans', sans-serif;
+    font-family: "Open Sans", sans-serif;
     color: #545454;
     font-size: 16px;
     line-height: 1.5;
@@ -2343,17 +2564,21 @@ body {
 }
 
 body a {
-    color: #57AD8D;
+    color: #57ad8d;
     text-decoration: none;
 }
 
 body a:hover {
     color: #41826a;
     cursor: pointer;
-    transition: all .3s ease;
+    transition: all 0.3s ease;
 }
 
-h1, h2, h3, h4, h5 {
+h1,
+h2,
+h3,
+h4,
+h5 {
     font-weight: 700;
     margin-bottom: 10px;
     margin-top: 0;
@@ -2590,13 +2815,19 @@ figure {
 }
 
 @media (max-width: 820px) {
-    .desktop-only, .forum-list .forum-listing .threads-count, .forum-list .forum-listing .last-thread, .forum-stats, .thread-list .thread .activity, .navbar-user {
+    .desktop-only,
+    .forum-list .forum-listing .threads-count,
+    .forum-list .forum-listing .last-thread,
+    .forum-stats,
+    .thread-list .thread .activity,
+    .navbar-user {
         display: none;
     }
 }
 
 @media (min-width: 820px) {
-    .mobile-only, .navbar-mobile-item {
+    .mobile-only,
+    .navbar-mobile-item {
         display: none;
     }
 }
@@ -2635,11 +2866,24 @@ section {
     color: white;
 }
 
-.link-unstyled, ul.breadcrumbs li a {
+.link-unstyled,
+ul.breadcrumbs li a {
     color: inherit;
 }
 
-.faded, .btn:disabled, .btn-blue:disabled, .btn-blue-outlined:disabled, .btn-brown:disabled, .btn-brown-outlined:disabled, .btn-green:disabled, .btn-green-outlined:disabled, .btn-red:disabled, .btn-red-outlined:disabled, .btn-ghost:disabled, .btn-disabled, a > img:hover {
+.faded,
+.btn:disabled,
+.btn-blue:disabled,
+.btn-blue-outlined:disabled,
+.btn-brown:disabled,
+.btn-brown-outlined:disabled,
+.btn-green:disabled,
+.btn-green-outlined:disabled,
+.btn-red:disabled,
+.btn-red-outlined:disabled,
+.btn-ghost:disabled,
+.btn-disabled,
+a > img:hover {
     opacity: 0.8;
 }
 
@@ -2647,7 +2891,7 @@ hr {
     border: 0;
     height: 1px;
     background: #333;
-    background-image: linear-gradient(to right, #F7F9FE, #D1D3D7, #F7F9FE);
+    background-image: linear-gradient(to right, #f7f9fe, #d1d3d7, #f7f9fe);
     margin-bottom: 20px;
 }
 
@@ -2656,7 +2900,7 @@ hr {
 }
 
 #app {
-    background: #F5F8FE;
+    background: #f5f8fe;
     min-height: 100vh;
 }
 </style>

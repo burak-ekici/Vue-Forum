@@ -16,14 +16,15 @@ export default {
     mixins: [asyncDataStatus], // fichier qui ajoute data et methods en plus et qui permet de l'utiliser dans plusieurs autres component
     computed:{
         categories(){
-            return this.$store.state.categories
+            return this.$store.state.categories.items
         },
         forums(){
-            return this.$store.state.forums
+            return this.$store.state.forums.items
         }
     },
     methods: {
-        ...mapActions(['fetchAllCategories','fetchForums'])
+        ...mapActions('categories', ['fetchAllCategories']),
+        ...mapActions('forums' ,['fetchForums'])
     },
     async created() {   // mapactions aps utilisable dans beforeCreate, et props et data non disponible dans beforeCreate
         const categories = await this.fetchAllCategories();

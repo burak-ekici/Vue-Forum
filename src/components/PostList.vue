@@ -34,7 +34,7 @@
                 </div>
 
                 <a  
-                    v-if='$store.state.authId === post.userId'
+                    v-if='$store.state.auth.authId === post.userId'
                     @click.prevent='toggleEditMode(post.id)' 
                     href="#" 
                     style="margin-left: auto; padding-left:10px;"
@@ -81,9 +81,9 @@ export default {
         }
     },
     methods: {
-        ...mapActions(['updatePost']),
+        ...mapActions('posts',['updatePost']),
         findUser(userId) {
-            return this.$store.getters.user(userId);
+            return this.$store.getters['users/user'](userId);
         },
         toggleEditMode(id) {
             this.editing = id === this.editing ? null : id;
@@ -95,7 +95,7 @@ export default {
     },
     async created() {
         
-        this.$store.dispatch("fetchUsers", { ids: this.posts.map(post => post.userId) });
+        this.$store.dispatch("users/fetchUsers", { ids: this.posts.map(post => post.userId) });
     },
     components: { PostEditor }
 }

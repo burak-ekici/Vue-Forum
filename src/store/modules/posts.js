@@ -1,12 +1,9 @@
-import db from "../config/firebase";
+import db from "@/config/firebase";
 import {
   doc,
   increment,
-  query,
-  where,
   collection,
   serverTimestamp,
-  getDocs,
   getDoc,
   arrayUnion,
   writeBatch,
@@ -20,17 +17,17 @@ export default {
   },
   getters: {},
   actions: {
-    async createPost(context, post) {
-      post.userId = context.state.authId;
+    async createPost({commit, state , rootState}, post) {
+      post.userId = rootState.auth.authId;
       post.publishedAt = serverTimestamp();
       const batch = writeBatch(db);
       const postRef = doc(collection(db, "posts"));
       const threadRef = doc(db, "threads", post.threadId);
-      const userRef = doc(db, "users", context.state.authId);
+      const userRef = doc(db, "users", rootState.auth.authId);
       batch.set(postRef, post);
       batch.update(threadRef, {
         posts: arrayUnion(postRef.id), // ArrayUnion permet d'ajouter un element dans le tableau et non de supprimer tout et remplacer par la valeur que l'on met
-        contributors: arrayUnion(context.state.authId),
+        contributors: arrayUnion(rootState.auth.authId),
       });
       batch.update(userRef, {
         postsCount: increment(1),
@@ -45,37 +42,37 @@ export default {
       //     posts:  arrayUnion(newPost.id), // ArrayUnion permet d'ajouter un element dans le tableau et non de supprimer tout et remplacer par la valeur que l'on met
       //     contributors :  arrayUnion(context.state.authId)
       // });
-      context.commit("setItem", {
+      commit("setItem", {
         resource: "posts",
         item: { ...newPost.data(), id: newPost.id },
-      });
-      context.commit("appendPostToThread", {
+      }, {root:true});
+      commit("threads/appendPostToThread", {
         childId: newPost.id,
         parentId: post.threadId,
-      });
-      context.commit("appendContributorToThread", {
-        childId: context.state.authId,
+      }, {root:true});
+      commit("threads/appendContributorToThread", {
+        childId: rootState.auth.authId,
         parentId: post.threadId,
-      });
+      }, {root:true});
     },
-    async updatePost(context, { text, id }) {
+    async updatePost({commit, state , rootState}, { text, id }) {
       const post = {
         text,
         edited: {
           at: serverTimestamp(),
-          by: context.state.authId,
+          by: rootState.auth.authId,
           moderated: false,
         },
       };
       const postRef = doc(db, "posts", id);
       await updateDoc(postRef, post);
       const updatedPost = await getDoc(postRef);
-      context.commit("setItem", { resource: "post", item: updatedPost });
+      commit("setItem", { resource: "posts", item: updatedPost }, {root:true});
     },
     fetchPost: ({ dispatch }, { id }) =>
-      dispatch("fetchItem", { resource: "posts", id }),
+      dispatch("fetchItem", { resource: "posts", id }, {root:true}),
     fetchPosts: ({ dispatch }, { ids }) =>
-      dispatch("fetchItems", { resource: "posts", ids }),
+      dispatch("fetchItems", { resource: "posts", ids } ,{root:true}),
     resetPosts(context) {
       context.commit("resetStorePosts");
     },

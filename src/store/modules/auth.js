@@ -1,4 +1,4 @@
-import db from "../config/firebase";
+import db from "@/config/firebase";
 import {
   doc,
   query,
@@ -6,6 +6,9 @@ import {
   collection,
   getDocs,
   getDoc,
+  orderBy,
+  limit,
+  startAfter
 } from "firebase/firestore";
 import {
   getAuth,
@@ -24,8 +27,8 @@ export default {
     authObserverUnsubscribe: null,
   },
   getters: {
-    authUser: (state, getters) => {
-      return getters.user(state.authId);
+    authUser: (state, getters , rootState , rootGetters) => {  // permet davoir acces aux getters des autres modules
+      return rootGetters['users/user'](state.authId);
     },
   },
   actions: {
@@ -35,9 +38,9 @@ export default {
       return new Promise((resolve) => {
         const auth = getAuth();
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
-          this.dispatch("unsubscribeAuthUserSnapshot");
+          this.dispatch("auth/unsubscribeAuthUserSnapshot");
           if (user) {
-            await this.dispatch("fetchAuthUser");
+            await this.dispatch("auth/fetchAuthUser");
             resolve(user);
           } else {
             resolve(null);
@@ -56,13 +59,13 @@ export default {
         email,
         password
       );
-      await context.dispatch("createUser", {
+      await context.dispatch("users/createUser", {
         id: result.user.uid,
         email,
         avatar,
         name,
         username,
-      });
+      }, {root:true});
     },
     signInWithEmailAndPassword(context, { email, password }) {
       const auth = getAuth();
@@ -76,13 +79,13 @@ export default {
       const userRef = doc(db, "users", user.uid);
       const userDoc = await getDoc(userRef);
       if (userDoc.exists) {
-        return context.dispatch("createUser", {
+        return context.dispatch("users/createUser", {
           id: user.uid,
           name: user.displayName,
           email: user.email,
           username: user.email,
           avatar: user.photoURL,
-        });
+        },{root:true});
       }
     },
     async signOut(context) {
@@ -101,24 +104,36 @@ export default {
         handleUnsubscribe: (unsubscribe) => {
           commit("setAuthUserUnsubscribe", unsubscribe);
         },
-      });
+      }, {root:true});
       commit("setAuthId", userId);
     },
     async fetchAuthUsersThreads({ commit, state }) {
       const ref = collection(db, "threads");
-      const q = query(ref, where("userId", "==", state.authId));
+      const q = query(ref, where("userId", "==",  state.authId));
       const posts = await getDocs(q);
       posts.forEach((item) => {
-        commit("setItem", { resource: "threads", item });
+        commit("setItem", { resource: "threads", item }, {root:true});
       });
     },
-    async fetchAuthUsersPosts({ commit, state }) {
+    async fetchAuthUsersPosts({ commit, state } , {startAfterThisPost , postsFromComponent}) {
       const ref = collection(db, "posts");
-      const q = query(ref, where("userId", "==", state.authId));
-      const posts = await getDocs(q);
-      posts.forEach((item) => {
-        commit("setItem", { resource: "posts", item });
-      });
+      let posts = postsFromComponent || [];
+      if(!startAfterThisPost){
+        let q = query(ref, where("userId", "==", state.authId), orderBy('publishedAt','desc'), limit(2));
+        posts = await getDocs(q);
+        posts.forEach((item) => {
+          commit("setItem", { resource: "posts", item }, {root:true});
+        });
+      }else{
+        const lastVisiblePost = posts.docs[posts.docs.length -1]
+        const nextQuery = query(ref, where("userId", "==", state.authId), orderBy('publishedAt','desc'),startAfter(lastVisiblePost), limit(2));
+        posts = await getDocs(nextQuery)
+        posts.forEach((item) => {
+          commit("setItem", { resource: "posts", item }, {root:true});
+        });
+      }
+      return posts
+      
     },
     async unsubscribeAuthUserSnapshot({ state, commit }) {
       if (state.authUserUnsubscribe) {

@@ -54,9 +54,9 @@ const routes = [
     name: 'ThreadShow' ,
     props:true,
     async beforeEnter(to,from,next){  // avant d'arriver sur la page, o, verifie si l'id du lien corespond a un id de notre data, si oui, on dirige sur la page, sinon on l'envoie sur la page erreur
-      await store.dispatch('fetchThread', {id : to.params.id})
+      await store.dispatch('threads/fetchThread', {id : to.params.id}) // pas besoin de root true en dehors du store
       // const threadExist = dataFromJson.threads.find(thread => thread.id === to.params.id) version avec data sur ficheir json // on verifie si l'id transmis par le lien existe dans notre data threads.id
-      const threadExist = findById(store.state.threads , to.params.id)
+      const threadExist = findById(store.state.threads.items , to.params.id)
       threadExist 
       ? next() 
       : next({ //si le thread n'existe pas ( selon l'id du lien donc du parametre ( params ) du lien)
@@ -84,7 +84,7 @@ const routes = [
     path:'/logout',
     name:'SignOut',
     async beforeEnter(to,from){
-      await store.dispatch('signOut')
+      await store.dispatch('auth/signOut')
       return { name:'Home'}   // return dans le router , sinon dans les components this.$router.push(lien)
     }
   },
@@ -127,12 +127,12 @@ const router = createRouter({
   }
 })
 router.beforeEach( async (to,from)=>{
-  await store.dispatch('initAuthentication')
+  await store.dispatch('auth/initAuthentication')
   store.dispatch('unsubscribeAllSnapshots')
-  if(to.meta.requiresAuth && !store.state.authId){
+  if(to.meta.requiresAuth && !store.state.auth.authId){
     return { name : 'SignIn', query : {redirectTo : to.path}}
   }
-  if(to.meta.requestGuest && store.state.authId){
+  if(to.meta.requestGuest && store.state.auth.authId){
     return {name :'Home'}
   }
 })

@@ -28,11 +28,12 @@ export default {
   },
   computed:{
       forum () {
-        return findById(this.$store.state.forums, this.forumId) ||''  // erreur sans || '' car la data n'est pas encore chargé par firebase lorsque la page se monte, donc donné comme valeur '' le temp de chargé
+        return findById(this.$store.state.forums.items, this.forumId) ||''  // erreur sans || '' car la data n'est pas encore chargé par firebase lorsque la page se monte, donc donné comme valeur '' le temp de chargé
       }
   },
   methods: {
-    ...mapActions(['createThread','fetchForum']),
+    ...mapActions('threads',['createThread']),
+    ...mapActions('forums',['fetchForum']),
     async save ({title,text}) {
       // dispatch a vuex action
       const thread = await this.createThread({ text , title , forumId : this.forum.id})

@@ -53,22 +53,24 @@ export default {
     },
     mixins: [asyncDataStatus], 
     computed: {
-        ...mapGetters(['authUser']),
+        ...mapGetters('auth',['authUser']),
         threads () {
-            return this.$store.state.threads
+            return this.$store.state.threads.items
         },
         posts () {
-            return this.$store.state.posts
+            return this.$store.state.posts.items
         },
         thread () {
-            return this.$store.getters.thread(this.id) || {}
+            return this.$store.getters['threads/thread'](this.id) || {}
         },
         threadPosts () {
             return this.posts.filter(post => post.threadId === this.id)
         }
     },
     methods:{
-        ...mapActions(['createPost','fetchThread','fetchUser','fetchPosts','fetchUsers']),
+        ...mapActions('posts',['createPost', 'fetchPosts']),
+        ...mapActions('threads',['fetchThread']),
+        ...mapActions('users',['fetchUser', 'fetchUsers']),
         addPost(eventData){
         const post = {
             ...eventData.post,
@@ -86,7 +88,7 @@ export default {
         // fetch le user associé a chaque post
         const users = posts.map(post => post.userId).concat(thread.userId)
 
-        await this.$store.dispatch("resetPosts");
+        await this.$store.dispatch("posts/resetPosts");
         
         await this.fetchUsers({ids :users})
 

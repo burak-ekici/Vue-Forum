@@ -16,6 +16,7 @@
         </div>
         <hr />
         <PostList :posts="user.posts" />
+        <AppInfiniteScroll @load="loadMorePostFromFirebase(this.returnedPosts)" :done="user.posts.length >= 100" />
       </div>
     </div>
   </div>
@@ -35,15 +36,32 @@ export default {
       type:Boolean
     }
   },
+  data(){
+    return {
+      returnedPosts:[]
+    }
+  },
   mixins: [asyncDataStatus],
   computed: {
-    ...mapGetters({user:'authUser'}) //  ou avec ...mapgetter
+    ...mapGetters('auth',{user:'authUser'}), //  ou avec ...mapgetter
+    lastPostFetched(){
+      if(this.user.posts.length === 0) return null
+      const length = this.user.posts?.length
+      return this.user.posts[length-1]
+    }
+  },
+  methods:{
+    async loadMorePostFromFirebase(posts = null){
+      if(posts){
+        this.returnedPosts = await this.$store.dispatch("auth/fetchAuthUsersPosts",{ startAfterThisPost: this.lastPostFetched , postsFromComponent : this.returnedPosts })
+      }else{
+        this.returnedPosts = await this.$store.dispatch("auth/fetchAuthUsersPosts",{ startAfterThisPost: this.lastPostFetched })
+      }
+    }
   },
   async created(){
 
-    await this.$store.dispatch("fetchAuthUsersPosts")
-
-    await this.$store.dispatch('fetchAuthUsersThreads')
+    await this.$store.dispatch('auth/fetchAuthUsersThreads')
 
     this.asyncDataStatus_fetched()
   }

@@ -3,7 +3,7 @@ import {
   docToResource,
   makeAppendChildToParentMutation,
 } from "@/helpers";
-import db from "../config/firebase";
+import db from "@/config/firebase";
 import {
   doc,
   collection,
@@ -20,7 +20,7 @@ export default {
   },
 
   getters: {
-    thread: (state) => {
+    thread: (state, getters , rootState) => { // le 3 eme argument permet d'avoir accés aux autres modules
       // on ne peux pas donner des parametre dans un getter
       // c'est pourquoi on lui renvoie une function qui prendra le parametre
       return (id) => {
@@ -32,7 +32,7 @@ export default {
           ...thread,
 
           get author() {
-            return findById(state.users, thread.userId);
+            return findById(rootState.users.items, thread.userId);
           },
           get repliesCount() {
             return thread.posts?.length > 0 ? thread.posts.length - 1 : 0;
@@ -51,7 +51,7 @@ export default {
 
   actions: {
     async createThread(context, { text, title, forumId }) {
-      const userId = context.state.authId;
+      const userId = context.rootState.auth.authId;
       const publishedAt = serverTimestamp();
       const threadRef = doc(collection(db, "threads")); // genere un random ID que l'on peux utiliser avecv threadRef.id
       const thread = { forumId, title, publishedAt, userId, id: threadRef.id };
@@ -67,27 +67,27 @@ export default {
       });
       await batch.commit();
       const newThread = await getDoc(threadRef);
-      context.commit("setItem", {
+      context.commit("setItem", {  // setItem est dans le store global , il n'est pas dans un modules donc pas de prefixe
         resource: "threads",
         item: { ...newThread.data(), id: newThread.id },
-      });
-      context.commit("appendThreadToUser", {
+      },{root:true} );  // root true en 3 eme arguments pour declarer que la function se trouve dans un autre modules, et l'indiquer avec le prefix sur le 1 er argument
+      context.commit("users/appendThreadToUser", {
         parentId: userId,
         childId: threadRef.id,
-      });
-      context.commit("appendThreadToForum", {
+      } , {root:true} );
+      context.commit("forums/appendThreadToForum", {
         parentId: forumId,
         childId: threadRef.id,
-      });
+      }, {root:true});
       // dispatch car la method createPost est dans action
       // commit car la method est dans mutation
-      await context.dispatch("createPost", { text, threadId: threadRef.id });
+      await context.dispatch("posts/createPost", { text, threadId: threadRef.id } , {root:true});
       return findById(context.state.items, threadRef.id);
     },
 
     async updateThread(context, { title, text, id }) {
       const thread = findById(context.state.items, id);
-      const post = findById(context.state.posts, thread.posts[0]);
+      const post = findById(context.rootState.posts.items, thread.posts[0]);
       let newThread = { ...thread, title };
       let newPost = { ...post, text };
       const threadRef = doc(db, "threads", id);
@@ -98,16 +98,16 @@ export default {
       await batch.commit();
       newThread = await getDoc(threadRef);
       newPost = await getDoc(postRef);
-      context.commit("setItem", { resource: "threads", item: newThread });
-      context.commit("setItem", { resource: "posts", item: newPost });
+      context.commit("setItem", { resource: "threads", item: newThread } , {root:true});
+      context.commit("setItem", { resource: "posts", item: newPost } , {root:true});
       return docToResource(newThread);
     },
 
     fetchThreads: ({ dispatch }, { ids }) =>
-      dispatch("fetchItems", { resource: "threads", ids }),
+      dispatch("fetchItems", { resource: "threads", ids } , {root:true}),
 
     fetchThread: ({ dispatch }, { id }) =>
-      dispatch("fetchItem", { resource: "threads", id }),
+      dispatch("fetchItem", { resource: "threads", id } , {root:true}),
 
     resetThreads(context) {
       context.commit("resetStoreThreads");
