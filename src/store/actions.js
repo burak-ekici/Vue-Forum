@@ -1,33 +1,7 @@
 import db from "../config/firebase";
-import {
-  doc,
-  increment,
-  query,
-  where,
-  onSnapshot,
-  collection,
-  serverTimestamp,
-  getDocs,
-  getDoc,
-  arrayUnion,
-  writeBatch,
-  updateDoc,
-  setDoc,
-} from "firebase/firestore";
-import {
-  getAuth,
-  onAuthStateChanged,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  GoogleAuthProvider,
-  signInWithPopup,
-} from "firebase/auth";
-import { docToResource } from "@/helpers";
+import { doc, onSnapshot, getDoc } from "firebase/firestore";
 
 export default {
-  
-  
-  
   async fetchItem(context, { resource, id, handleUnsubscribe = null }) {
     const item = doc(db, resource, id);
     const itemSnap = await getDoc(item);
@@ -58,5 +32,4 @@ export default {
     context.state.unsubscribes.forEach((unsubscribe) => unsubscribe());
     context.commit("resetUnsubscribes");
   },
-  
 };

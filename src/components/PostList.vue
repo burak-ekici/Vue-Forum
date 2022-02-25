@@ -13,8 +13,8 @@
                     <img  class="avatar-large" :src="findUser(post.userId).avatar" alt="">
                 </a>
 
-                <p class="desktop-only text-small">{{postCount(post.userId)}} posts</p>
-                <p class="desktop-only text-small">{{threadCount(post.userId)}} threads</p>
+                <p class="desktop-only text-small"><AppPostsCounter :id="post.userId" /> posts</p>
+                <p class="desktop-only text-small"><AppThreadsCounter :id="post.userId" /> threads</p>
 
             </div>
 
@@ -112,7 +112,6 @@ export default {
         
         setTimeout(()=>{
             this.$forceUpdate()
-
         },200)
         
     }

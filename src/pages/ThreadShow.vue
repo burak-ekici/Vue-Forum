@@ -72,7 +72,7 @@ export default {
     methods:{
         ...mapActions('posts',['createPost', 'fetchPosts']),
         ...mapActions('threads',['fetchThread']),
-        ...mapActions('users',['fetchUser', 'fetchUsers','usersPostsCount','usersThreadsCount']),
+        ...mapActions('users',['fetchUser', 'fetchUsers']),
         addPost(eventData){
         const post = {
             ...eventData.post,
@@ -94,16 +94,12 @@ export default {
         
         await this.fetchUsers({ids :users})
 
-        this.usersPostsArray = await this.usersPostsCount({threadId : thread.id}) // renvoie un tableau avec tous les posts des utilisateurs 
-        
-        this.usersThreadsArray = await this.usersThreadsCount({threadId : thread.id}) 
-        console.log( this.usersThreadsArray)
-        
         const user = await this.fetchUser({id : thread.userId})
         
         this.user = user.username
+
         
         this.asyncDataStatus_fetched()
-    },
+    }
 }
 </script>

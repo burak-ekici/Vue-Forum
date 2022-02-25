@@ -22,6 +22,8 @@ export default {
   namespaced: true,
   state: {
     items: [],
+    usersAllPosts:[],
+    userAllThreads:[]
   },
   getters: {
     user: (state, getters, rootState) => {
@@ -55,6 +57,9 @@ export default {
         };
       };
     },
+    usersAllThreads :(state)=>{
+      return state.userAllThreads
+    }
   },
   actions: {
     async createUser(context, { id, email, name, username, avatar = null }) {
@@ -99,47 +104,27 @@ export default {
         { root: true }
       );
     },
-    async usersPostsCount(context, { threadId }) {
-      const ref = doc(db, "threads", threadId);
-      const threadDoc = await getDoc(ref);
-      const threadToReturn = { ...threadDoc.data(), id: threadDoc.id };
-      const ThreadUsersId = [
-        ...(threadToReturn.contributors?.flat() || ""),
-        threadToReturn.userId,
-      ];
-      const idsArray = new Set(ThreadUsersId); // sans doublon si plusieurs fois commentaires de la même personne ou reponse du createur du thread
-      const usersPostsArray = [];
-      idsArray.forEach(async (userId) => {
-        const q = query(collection(db, "posts"), where("userId", "==", userId), orderBy('publishedAt'));
-        const usersPosts = await getDocs(q);
-        usersPosts.forEach((el) => {
-          const data = { ...el.data(), id: el.id };
-          usersPostsArray.push({ userId, data });
-        });
+    async usersPostsCount(context, { userId  }) {
+      const q = query(collection(db, "posts"), where("userId", "==", userId));
+      const usersPosts = await getDocs(q);
+      const usersPostsArray = []
+      usersPosts.forEach((el) => {
+        const data = { ...el.data(), id: el.id };
+        context.commit("setToUsersAllPostsInUsersState", { item : data} , { root: true })
+        usersPostsArray.push({ userId, data });
       });
-
       return usersPostsArray;
     },
-    async usersThreadsCount(context , {threadId}){
-      const ref = doc(db, "threads", threadId);
-      const threadDoc = await getDoc(ref);
-      const threadToReturn = { ...threadDoc.data(), id: threadDoc.id };
-      const ThreadUsersId = [
-        ...(threadToReturn.contributors?.flat() || ""),
-        threadToReturn.userId,
-      ];
-      const idsArray = new Set(ThreadUsersId);
-      const usersThreadsArray = [];
-      idsArray.forEach(async (userId)=>{
-        const q = query(collection(db,'threads') , where('userId' , '==' , userId))
-        const usersThreads = await getDocs(q)
-        usersThreads.forEach(thread=>{
-          const data = {...thread.data(), id: thread.id}
-          usersThreadsArray.push({userId, data})
-        })
-      })
-
-      return usersThreadsArray
+    async usersThreadsCount(context , {userId}){
+      const q = query(collection(db, "threads"), where("userId", "==", userId));
+      const usersThreads = await getDocs(q);
+      const usersThreadsArray = []
+      usersThreads.forEach((el) => {
+        const data = { ...el.data(), id: el.id };
+        context.commit("setToUsersAllThreadsInUsersState", { item : data} , { root: true })
+        usersThreadsArray.push({ userId, data });
+      });
+      return usersThreadsArray;
     },
     fetchUser: ({ dispatch }, { id }) =>
       dispatch("fetchItem", { resource: "users", id }, { root: true }),

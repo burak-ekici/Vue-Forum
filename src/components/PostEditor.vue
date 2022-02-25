@@ -1,6 +1,6 @@
 <template>
   <div class="col-full">
-      <form @submit.prevent="save">
+      <form @submit.prevent="save" >
           <div class="form-group">
               <textarea v-model="postCopy.text" class="form-input" name="" id="" cols="30" rows="10"></textarea>
           </div>
@@ -40,9 +40,9 @@ export default {
             this.$emit('save', { post : this.postCopy } )
             // this.post.push(post)
             // this.thread.post.push(postId)
-
             this.postCopy.text = ""
-        }
+        },
+        
     }
 
 }
