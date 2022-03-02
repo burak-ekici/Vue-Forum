@@ -10,12 +10,18 @@ import {
   updateDoc,
 } from "firebase/firestore";
 
+import { makeFetchItemAction, makeFetchItemsAction } from '@/helpers'
+
 export default {
   namespaced : true,
   state: {
     items: [],
   },
-  getters: {},
+  getters: {
+    getPosts : (state)=> {
+      return state.items
+    }
+  },
   actions: {
     async createPost({commit, state , rootState}, post) {
       post.userId = rootState.auth.authId;
@@ -54,6 +60,7 @@ export default {
         childId: rootState.auth.authId,
         parentId: post.threadId,
       }, {root:true});
+      console.log(state.items)
     },
     async updatePost({commit, state , rootState}, { text, id }) {
       const post = {
@@ -69,10 +76,8 @@ export default {
       const updatedPost = await getDoc(postRef);
       commit("setItem", { resource: "posts", item: updatedPost }, {root:true});
     },
-    fetchPost: ({ dispatch }, { id }) =>
-      dispatch("fetchItem", { resource: "posts", id }, {root:true}),
-    fetchPosts: ({ dispatch }, { ids }) =>
-      dispatch("fetchItems", { resource: "posts", ids } ,{root:true}),
+    fetchPost: makeFetchItemAction({ resource: 'posts' }),
+    fetchPosts: makeFetchItemsAction({ resource: 'posts' }),
     resetPosts(context) {
       context.commit("resetStorePosts");
     },

@@ -1,12 +1,15 @@
 import db from "../config/firebase";
-import { doc, onSnapshot, getDoc } from "firebase/firestore";
+import { doc, onSnapshot, getDoc, unsubscribe} from "firebase/firestore";
 
 export default {
-  async fetchItem(context, { resource, id, handleUnsubscribe = null }) {
+  async fetchItem(context, { resource, id, handleUnsubscribe = null, once = false }) {
     const item = doc(db, resource, id);
     const itemSnap = await getDoc(item);
     let itemToReturn = { ...itemSnap.data(), id: itemSnap.id };
     const unsubscribe = onSnapshot(doc(db, resource, id), (doc) => {
+      if(once){
+        unsubscribe()
+      }
       if (doc.exists) {
         itemToReturn = { ...doc.data(), id: doc.id };
         context.commit("setItem", { resource, item: itemToReturn });

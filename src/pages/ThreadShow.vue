@@ -33,6 +33,7 @@ import PostList from '@/components/PostList'
 import PostEditor from '@/components/PostEditor'
 import { mapActions , mapGetters } from 'vuex'
 import asyncDataStatus from '@/mixins/asyncDataStatus'
+import useNotifications from '@/composables/useNotifications'
 
 export default {
     name:"ThreadShow",
@@ -53,6 +54,9 @@ export default {
             type:String
         }
     },
+    setup () {
+        const { addNotification } = useNotifications()
+    },
     mixins: [asyncDataStatus], 
     computed: {
         ...mapGetters('auth',['authUser']),
@@ -69,16 +73,21 @@ export default {
             return this.posts.filter(post => post.threadId === this.id)
         }
     },
+    watch:{
+        posts : (newValue , oldValue)=>{
+            return newValue
+        }
+    },
     methods:{
         ...mapActions('posts',['createPost', 'fetchPosts']),
         ...mapActions('threads',['fetchThread']),
         ...mapActions('users',['fetchUser', 'fetchUsers']),
         addPost(eventData){
-        const post = {
-            ...eventData.post,
-            threadId : this.id
-        }
-        this.createPost(post)
+            const post = {
+                ...eventData.post,
+                threadId : this.id
+            }
+            this.createPost(post)
         }
     },
     async created() {

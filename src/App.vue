@@ -1,18 +1,20 @@
 <template>
   <TheNavbar />
   <div class="container">
-    <router-view v-show="showPage" @ready="onPageReady" :key="$route.path" />  <!-- le :key='$route.path' permet de destroy et regenerer la page a chaque changement de lien car si on reste sur une même page par exemple : thread/-Vff..  et que l'on va sur thread/-Other , la page va bugué, car il ne va pas recharger la page, il faut la detruire avant  -->
-    <AppSpinner v-show="!showPage" />
+    <router-view v-show="showPage" @ready="onPageReady" :key="`${$route.path}${JSON.stringify($route.query)}`" />  <!-- le :key='$route.path' permet de destroy et regenerer la page a chaque changement de lien car si on reste sur une même page par exemple : thread/-Vff..  et que l'on va sur thread/-Other , la page va bugué, car il ne va pas recharger la page, il faut la detruire avant  -->
+    <AppSpinner v-show="!showPage" />                                        
   </div>
+  <AppNotifications />
 </template>
 
 <script>
 import { mapActions } from 'vuex'
 import TheNavbar from './components/TheNavbar.vue'
+import AppNotifications from './components/AppNotifications.vue'
 import AppSpinner from './components/AppSpinner.vue'
 import Nprogress from 'nprogress'    // librairie pour une progress Bar en haut du navigateur
 export default {
-  components: { TheNavbar, AppSpinner },
+  components: { TheNavbar, AppSpinner, AppNotifications},
   name: 'App',
   data(){
     return{

@@ -2,6 +2,8 @@ import {
   findById,
   docToResource,
   makeAppendChildToParentMutation,
+  makeFetchItemAction,
+  makeFetchItemsAction
 } from "@/helpers";
 import db from "@/config/firebase";
 import {
@@ -12,11 +14,13 @@ import {
   arrayUnion,
   writeBatch,
 } from "firebase/firestore";
-
+import chunk from 'lodash/chunk' // fonction qui permet de faire des tableau dans in tableau ex : arr= [1,2,3,4,5]  chunk(arr , 2) => [[1,2],[3,4],[5]] // le second parametre choisie le nombre d element dans un groupe
+ 
 export default {
   namespaced : true,
   state: {
     items: [], // state.threads.items
+    maxThreadsPage : null
   },
 
   getters: {
@@ -102,13 +106,16 @@ export default {
       context.commit("setItem", { resource: "posts", item: newPost } , {root:true});
       return docToResource(newThread);
     },
-
-    fetchThreads: ({ dispatch }, { ids }) =>
-      dispatch("fetchItems", { resource: "threads", ids } , {root:true}),
-
-    fetchThread: ({ dispatch }, { id }) =>
-      dispatch("fetchItem", { resource: "threads", id } , {root:true}),
-
+    fetchThreadsByPage : async ({dispatch, commit},{ids , page , perPage = 10}) => {
+      commit('resetStoreThreads')
+      const chunkedIds = chunk(ids , perPage)
+      const idsOfThisPage = chunkedIds[page - 1]
+      const data = await dispatch('fetchThreads', {ids:idsOfThisPage})
+      return data
+      // dispatch('setMaxThreadsPage')
+    },
+    fetchThread: makeFetchItemAction({ resource: 'threads' }),
+    fetchThreads: makeFetchItemsAction({ resource: 'threads' }),
     resetThreads(context) {
       context.commit("resetStoreThreads");
     },
@@ -126,7 +133,7 @@ export default {
     }),
 
     resetStoreThreads(state) {
-      state.threads = [];
+      state.items = [];
     },
   },
 };

@@ -17,19 +17,19 @@ import store from '@/store'
 const routes = [
   { 
     path: '/', 
-    component: Home,
+    component: ()=> import('@/pages/Home.vue'),
     name: 'Home' 
   },
   {
     path: '/category/:id',
     name: 'Category',
-    component: Category,
+    component: ()=> import('@/pages/Category.vue'),
     props: true
   },
   {
     path: '/me',
     name: 'Profile',
-    component: Profile,
+    component: ()=> import('@/pages/Profile.vue'),
     meta : { toTop : true, smoothScroll : true , requiresAuth : true},
     // beforeEnter(to, from){   
     //   if(!store.state.authId) return {name:'Home'}   nous allons l'implementer plus bas dans le router.beforeEach
@@ -38,23 +38,23 @@ const routes = [
   {
     path: '/me/edit',
     name: 'ProfileEdit',
-    component: Profile,
+    component: ()=> import('@/pages/Profile.vue'),
     props:{edit : true},
     meta : {requiresAuth : true}
   },
   {
     path: '/forum/:id',
     name : 'Forum',
-    component: Forum,
-    props: true
+    component: ()=> import('@/pages/Forum.vue'),
+    props: true,
   },
   { 
     path: '/thread/:id',
-    component: ThreadShow ,
+    component: ()=> import('@/pages/ThreadShow.vue') ,
     name: 'ThreadShow' ,
     props:true,
     async beforeEnter(to,from,next){  // avant d'arriver sur la page, o, verifie si l'id du lien corespond a un id de notre data, si oui, on dirige sur la page, sinon on l'envoie sur la page erreur
-      await store.dispatch('threads/fetchThread', {id : to.params.id}) // pas besoin de root true en dehors du store
+      await store.dispatch('threads/fetchThread', {id : to.params.id, once : true}) // pas besoin de root true en dehors du store
       // const threadExist = dataFromJson.threads.find(thread => thread.id === to.params.id) version avec data sur ficheir json // on verifie si l'id transmis par le lien existe dans notre data threads.id
       const threadExist = findById(store.state.threads.items , to.params.id)
       threadExist 
@@ -70,14 +70,14 @@ const routes = [
   {
     path: '/forum/:forumId/thread/create',
     name: 'ThreadCreate',
-    component: ThreadCreate,
+    component: ()=> import('@/pages/ThreadCreate.vue'),
     props: true,
     meta : {requiresAuth : true}
   },
   {
     path: '/signin',
     name: 'SignIn',
-    component: SignIn,
+    component: ()=> import('@/pages/SignIn.vue'),
     meta:{requestGuest:true}
   },
   {
@@ -91,19 +91,19 @@ const routes = [
   {
     path: '/register',
     name: 'Register',
-    component: Register,
+    component: ()=> import('@/pages/Register.vue'),
     meta:{requestGuest : true}
   },
   {
     path: '/thread/:id/edit',
     name: 'ThreadEdit',
-    component: ThreadEdit,
+    component: ()=> import('@/pages/ThreadEdit.vue'),
     props: true,
     meta : {requiresAuth : true}
   },
   {
     path: '/:pathMatch(.*)*',
-    component : NotFound,
+    component : ()=> import('@/pages/NotFound.vue'),
     name:'NotFound'
   }
 

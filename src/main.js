@@ -6,6 +6,7 @@ import store from './store/index' // permet d'acceder au store en dehors de l'in
 import FontAwesome from '@/plugins/FontAwesome' // retourne une fonction
 import ClickOutsideDirective from '@/plugins/ClickOutsideDirective'
 import PageScrolling from '@/plugins/PageScrollingDirective'
+import Vue3Pagination from '@/plugins/Vue3Pagination'
 
 const forumApp = createApp(App)
 
@@ -19,6 +20,7 @@ forumApp.use(store)
 forumApp.use(FontAwesome)
 forumApp.use(ClickOutsideDirective)  // notre plugin de Custom Directive
 forumApp.use(PageScrolling)  // notre plugin de Custom Directive
+forumApp.use(Vue3Pagination)  // notre plugin de Custom Directive
 
 // fonction dans la doc vue.js -> section (en anglais) 'base component names ->  puis detailed explanation' 
 // Permet de chercher tous les fichier dans le dossier components qui commencent par App

@@ -16,6 +16,8 @@ import {
   docToResource,
   makeAppendChildToParentMutation,
   findById,
+  makeFetchItemAction,
+  makeFetchItemsAction
 } from "@/helpers";
 
 export default {
@@ -126,10 +128,8 @@ export default {
       });
       return usersThreadsArray;
     },
-    fetchUser: ({ dispatch }, { id }) =>
-      dispatch("fetchItem", { resource: "users", id }, { root: true }),
-    fetchUsers: ({ dispatch }, { ids }) =>
-      dispatch("fetchItems", { resource: "users", ids }, { root: true }),
+    fetchUser: makeFetchItemAction({ resource: 'users' }),
+    fetchUsers: makeFetchItemsAction({ resource: 'users' }),
   },
   mutations: {
     appendThreadToUser: makeAppendChildToParentMutation({

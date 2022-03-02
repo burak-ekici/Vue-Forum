@@ -1,5 +1,6 @@
 import db from "@/config/firebase";
 import { doc, onSnapshot, collection, getDocs } from "firebase/firestore";
+import { makeFetchItemAction, makeFetchItemsAction } from '@/helpers'
 
 export default {
   namespaced : true,
@@ -8,10 +9,8 @@ export default {
   },
   getters: {},
   actions: {
-    fetchCategory: ({ dispatch }, { id }) =>
-      dispatch("fetchItem", { resource: "categories", id }, {root:true}),
-    fetchCategories: ({ dispatch }, { id }) =>
-      dispatch("fetchItem", { resource: "categories", ids }, {root:true}),
+    fetchCategory: makeFetchItemAction({ resource: 'categories' }),
+    fetchCategories: makeFetchItemsAction({ resource: 'categories' }),
     async fetchAllCategories(context) {
       const categories = [];
       // recupere tous les threads de firebase
