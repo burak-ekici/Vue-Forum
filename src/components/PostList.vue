@@ -10,7 +10,7 @@
                 <a href="#" class="user-name">{{findUser(post.userId).name}}</a>
 
                 <a href="#">
-                    <img  class="avatar-large" :src="findUser(post.userId).avatar" alt="">
+                    <AppAvatarImg class="avatar-large" :src="findUser(post.userId).avatar" />
                 </a>
 
                 <p class="desktop-only text-small"><AppPostsCounter :id="post.userId" /> posts</p>

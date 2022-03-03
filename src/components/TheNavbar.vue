@@ -25,11 +25,7 @@
                         v-click-outside="() => userDropdownOpen = false"
                     >
                         <!--custome directive -> on ne peux pas faire userDropdownOpen, car le scope ne le permet pas, on doit faire une fonction, même anonyme-->
-                        <img
-                            class="avatar-small"
-                            :src="authUser.avatar"
-                            :alt="`${authUser.name} profile picture`"
-                        />
+                        <AppAvatarImg class="avatar-small" :src="authUser.avatar" :alt="`${authUser.name} profile picture`"/>
                         <span>
                             {{ authUser.name }}
                             <img
