@@ -18,12 +18,14 @@
 
         <div class="form-group">
           <label for="email">Email</label>
-          <VeeField name="email" v-model="form.email" id="email" type="email" class="form-input" />
+          <VeeField name="email" v-model="form.email" id="email" type="email" class="form-input" rules="required|email" />
+          <VeeErrorMessage name="email" class="form-error" />
         </div>
 
         <div class="form-group">
           <label for="password">Password</label>
-          <VeeField name="password" v-model="form.password" id="password" type="password" class="form-input" />
+          <VeeField name="password" v-model="form.password" id="password" type="password" class="form-input" rules="required|min:8" />
+          <VeeErrorMessage name="password" class="form-error" />
         </div>
 
         <div class="form-group">
