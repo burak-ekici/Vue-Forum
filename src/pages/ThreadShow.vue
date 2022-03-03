@@ -56,6 +56,7 @@ export default {
     },
     setup () {
         const { addNotification } = useNotifications()
+        return {addNotification}
     },
     mixins: [asyncDataStatus], 
     computed: {
@@ -82,6 +83,13 @@ export default {
         ...mapActions('posts',['createPost', 'fetchPosts']),
         ...mapActions('threads',['fetchThread']),
         ...mapActions('users',['fetchUser', 'fetchUsers']),
+        async fetchPostsWithUsers (ids) {
+            // fetch the posts
+            const posts = await this.fetchPosts({ ids })
+            // fetch the users associated with the posts
+            const users = posts.map(post => post.userId).concat(this.thread.userId)
+            await this.fetchUsers({ ids: users })
+        },
         addPost(eventData){
             const post = {
                 ...eventData.post,
@@ -92,16 +100,21 @@ export default {
     },
     async created() {
             // fetch Data from firebase
-        // fetch le thread grace a l'id du props ( dans le lien grace a vue-router )
-        const thread = await this.fetchThread( {id : this.id})
-        // fetch the post
-        const posts = await this.fetchPosts( {ids : thread.posts})
-        // fetch le user associé a chaque post
-        const users = posts.map(post => post.userId).concat(thread.userId)
-
         await this.$store.dispatch("posts/resetPosts");
+        const thread = await this.fetchThread({
+            id: this.id,
+            onSnapshot: async ({ isLocal, item, previousItem }) => {
+                if (!this.asyncDataStatus_ready || isLocal) return
+                const newPosts = difference(item.posts, previousItem.posts)
+                await this.fetchPostsWithUsers(newPosts)
+                this.addNotification({ message: 'Thread recently updated' })
+            }
+        })
+        await this.fetchPostsWithUsers(thread.posts)
         
-        await this.fetchUsers({ids :users})
+
+
+        
 
         const user = await this.fetchUser({id : thread.userId})
         

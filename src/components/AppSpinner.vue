@@ -11,9 +11,27 @@
 </div>
 </template>
 
+<script>
+export default {
+  props: {
+    color: { type: String, default: '#263959' },
+    position: {
+      type: String,
+      default : 'absolute'
+    }
+  },
+  data () {
+    return {
+      spinnerColor: this.color,
+      cssPosition : this.position
+    }
+  }
+}
+</script>
+
 <style scoped> 
 .loaderContainer{
-  position:absolute;
+  position:v-bind(cssPosition);
   top:0;
   left:0;
   width:100%;
@@ -21,6 +39,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  
 }
   .sk-chase {
   width: 40px;
@@ -43,7 +62,7 @@
   display: block;
   width: 25%;
   height: 25%;
-  background-color: #263959;
+  background-color: v-bind(spinnerColor);
   border-radius: 100%;
   animation: sk-chase-dot-before 2.0s infinite ease-in-out both; 
 }

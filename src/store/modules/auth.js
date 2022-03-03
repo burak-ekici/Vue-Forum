@@ -1,4 +1,5 @@
 import db from "@/config/firebase";
+import useNotifications from '@/composables/useNotifications'
 import {
   doc,
   query,
@@ -18,6 +19,7 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
 } from "firebase/auth";
+import { getStorage, ref , uploadBytes , getDownloadURL} from "firebase/storage";
 
 export default {
   namespaced : true,
@@ -59,6 +61,7 @@ export default {
         email,
         password
       );
+      avatar = await dispatch('uploadAvatar', { authId: result.user.uid, file: avatar })
       await context.dispatch("users/createUser", {
         id: result.user.uid,
         email,
@@ -92,6 +95,21 @@ export default {
       const auth = await getAuth();
       await auth.signOut();
       context.commit("setAuthId", null);
+    },
+    async uploadAvatar ({ state }, { authId, file }) {
+      if (!file) return null
+      authId = authId || state.authId
+      try{
+        const storage = getStorage();
+        const storageBucket = ref(storage, `uploads/${authId}/images/${Date.now()}-${file.name}`); // lire la doc storage firestore 
+        const snapshot = await uploadBytes(storageBucket, file)
+        const url = await getDownloadURL(snapshot.ref).catch(e => alert(e.message))
+        return url
+      }catch(e){
+        const { addNotification } = useNotifications()
+        addNotification({ message: 'Error uploading avatar image', type: 'error' })
+      }
+      
     },
     fetchAuthUser: async ({ dispatch, commit }) => {
       const auth = getAuth();

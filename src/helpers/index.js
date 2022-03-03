@@ -43,8 +43,8 @@ export const makeAppendChildToParentMutation =  ({ parent, child }) => {
 
 export const makeFetchItemAction = ({ resource }) => {
     return ({ dispatch }, payload) => dispatch('fetchItem', {  resource, ...payload }, { root: true })
-  }
-  export const makeFetchItemsAction = ({ resource }) => {
+}
+export const makeFetchItemsAction = ({ resource }) => {
     return ({ dispatch }, payload) => dispatch('fetchItems', { resource, ...payload }, { root: true })
-  }
+}
 
