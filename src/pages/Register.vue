@@ -4,29 +4,34 @@
       <VeeForm @submit="register" class="card card-form" >
         <h1 class="text-center">Register</h1>
 
-        <div class="form-group">
-          <label for="name">Full Name</label>
-          <VeeField name="name" v-model="form.name" id="name" type="text" class="form-input" rules="required" />  <!-- rules="required" est definie dans VeeValidatePlugin-->
-          <VeeErrorMessage name="name" class="form-error" />
+        <!-- <div class="form-group"> -->
+          <!-- <label for="name">Full Name</label> -->
+          <!-- <VeeField name="name" label="Name" v-model="form.name" id="name" type="text" class="form-input" rules="required" />  rules="required" est definie dans VeeValidatePlugin -->
+          <!-- <VeeErrorMessage name="name" class="form-error" /> -->
+        <!-- </div> -->
+
+        <!-- <div class="form-group">
+          <label for="username">Username</label> -->
+          <!-- <VeeField name="username" label="Username" v-model="form.username" id="username" type="text" class="form-input" rules="required|unique:users,username" /> label permet juste de recuperer avec {field} dans le plugin veevalidate pour rendre l'erreur avec la majuscule, sinno Field prend le name en parametre -->
+          <!-- <VeeErrorMessage name="username" class="form-error" />
         </div>
 
         <div class="form-group">
-          <label for="username">Username</label>
-          <VeeField name="username" v-model="form.username" id="username" type="text" class="form-input" rules="required" />
-          <VeeErrorMessage name="username" class="form-error" />
-        </div>
-
-        <div class="form-group">
-          <label for="email">Email</label>
-          <VeeField name="email" v-model="form.email" id="email" type="email" class="form-input" rules="required|email" />
-          <VeeErrorMessage name="email" class="form-error" />
+          <label for="email">Email</label> -->
+          <!-- <VeeField name="email" label="Email" v-model="form.email" id="email" type="email" class="form-input" :rules="{required: true , email: true, unique : {firebaseTable: 'users' , tableRow: 'email'}}" /> on peux aussi rules="required|email|unique:users,email"  , ca passera en arguments 2 varible qu iserons destructurer dans le plugin veevalidate  -->
+          <!-- <VeeErrorMessage name="email" class="form-error" />
         </div>
 
         <div class="form-group">
           <label for="password">Password</label>
-          <VeeField name="password" v-model="form.password" id="password" type="password" class="form-input" rules="required|min:8" />
+          <VeeField name="password" label="Password" v-model="form.password" id="password" type="password" class="form-input" rules="required|min:8" />
           <VeeErrorMessage name="password" class="form-error" />
-        </div>
+        </div> -->
+
+        <AppFormField v-model="form.name" name="name" label="Name" rules="required" type="text" />
+        <AppFormField v-model="form.username" name="username" label="Username" rules="required" type="text" />
+        <AppFormField v-model="form.email" name="email" label="Email" rules="required|email" type="email" />
+        <AppFormField v-model="form.password" name="password" label="Password" rules="required|min:8" type="password" />
 
         <div class="form-group">
           <label for="avatar">

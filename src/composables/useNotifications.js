@@ -1,4 +1,6 @@
 import { reactive } from 'vue'
+
+
 const notifications = reactive([])
 
 const addNotification = ({ message, timeout = null, type = 'info' } ) => {
