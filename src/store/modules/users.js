@@ -70,7 +70,7 @@ export default {
       const mail = email.toLowerCase();
       const user = {
         avatar,
-        mail,
+        email,
         username,
         usernameLower,
         registeredAt,

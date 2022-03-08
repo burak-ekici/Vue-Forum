@@ -1,5 +1,5 @@
 import { defineRule, Form, Field, ErrorMessage, configure } from "vee-validate";
-import { required, email, min, max } from "@vee-validate/rules";
+import { required, email, min, max, url } from "@vee-validate/rules";
 import { localize } from "@vee-validate/i18n";
 import db from "@/config/firebase";
 import { query, getDocs, collection, where } from "firebase/firestore";
@@ -25,9 +25,9 @@ export default (app) => {   // premier parametre , le nom de la regle ,le second
   configure({
     generateMessage: localize("en", {
       messages: {
-        required: "{field} is required",
+        required: "{field} is required",  // field retourne le name ou label si existant de l'input
         email: "{field} must be a valid Email",
-        min: "{field} must be 0:{min} characters long",
+        min: "{field} must be 0:{min} characters long", // {min} retourne la valeur passer en paramtre dans l'input rules="min:8"
         unique:'{field} is already taken',
       },
     }),

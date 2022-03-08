@@ -1,6 +1,6 @@
 <template>
     <div class="profile-card">
-        <form @submit.prevent="save">
+        <VeeForm @submit="save">
             <p class="text-center avatar-edit">
                 <label for="avatar">
                     <AppAvatarImg
@@ -22,34 +22,31 @@
                     
                 </label>
             </p>
-
-            <div class="form-group">
-                <input
-                    v-model="activeUser.username"
-                    type="text"
-                    placeholder="Username"
-                    class="form-input text-lead text-bold"
-                />
-            </div>
-
-            <div class="form-group">
-                <input
-                    v-model="activeUser.name"
-                    type="text"
-                    placeholder="Full Name"
-                    class="form-input text-lead"
-                />
-            </div>
-
-            <div class="form-group">
-                <label for="user_bio">Bio</label>
-                <textarea
-                    v-model="activeUser.bio"
-                    class="form-input"
-                    id="user_bio"
-                    placeholder="Write a few words about yourself."
-                ></textarea>
-            </div>
+            <AppFormField
+                v-model="activeUser.username"
+                name="username"
+                label="Username"
+                type="text"
+                placeholder="Username"
+                rules="required"
+            />
+            <AppFormField
+                v-model="activeUser.name"
+                name="name"
+                type="text"
+                label="Name"
+                placeholder="Full Name"
+                rules="required"
+            />
+            <AppFormField
+                as="textarea"
+                v-model="activeUser.bio"
+                name="bio"
+                type="text"
+                label="Bio"
+                placeholder="Write a few words about yourself."
+                id="user_bio"
+            />
 
             <div class="stats">
                 <span>{{ user.postsCount }} posts</span>
@@ -57,47 +54,44 @@
             </div>
 
             <hr />
-
-            <div class="form-group">
-                <label class="form-label" for="user_website">Website</label>
-                <input
-                    v-model="activeUser.website"
-                    autocomplete="off"
-                    class="form-input"
-                    id="user_website"
-                />
-            </div>
-
-            <div class="form-group">
-                <label class="form-label" for="user_email">Email</label>
-                <input
-                    v-model="activeUser.email"
-                    autocomplete="off"
-                    class="form-input"
-                    id="user_email"
-                />
-            </div>
-
-            <div class="form-group">
-                <label class="form-label" for="user_location">Location</label>
-                <input
-                    v-model="activeUser.location"
-                    autocomplete="off"
-                    class="form-input"
-                    id="user_location"
-                />
-            </div>
+            <AppFormField
+                v-model="activeUser.website"
+                name="website"
+                type="text"
+                label="Website"
+                id="user_website"
+                autocomplete="off"
+                rules="url"
+            />
+            <AppFormField
+                v-model="activeUser.email"
+                name="email"
+                type="text"
+                label="Email"
+                id="user_email"
+                autocomplete="off"
+                :rules="`required|email`"
+            />
+            <AppFormField
+                v-model="activeUser.location"
+                name="location"
+                type="text"
+                label="Location"
+                id="user_location"
+                autocomplete="off"
+            />
 
             <div class="btn-group space-between">
                 <button class="btn-ghost" @click.prevent="cancel">Cancel</button>
                 <button type="submit" class="btn-blue">Save</button>
             </div>
-        </form>
+        </VeeForm>
     </div>
 </template>
 
 <script>
 import { mapActions } from 'vuex'
+import AppFormField from './AppFormField.vue'
 export default {
     props: {
         user: {
@@ -109,25 +103,26 @@ export default {
         return {
             uploadingImage: false,
             activeUser: { ...this.user }
-        }
+        };
     },
     methods: {
-        ...mapActions('auth', ['uploadAvatar']),
+        ...mapActions("auth", ["uploadAvatar"]),
         async handleAvatarUpload(e) {
-            this.uploadingImage = true
-            const file = e.target.files[0]
-            const uploadedImage = await this.uploadAvatar({ file })
-            this.activeUser.avatar = uploadedImage ||this.activeUser.avatar
-            this.uploadingImage = false
+            this.uploadingImage = true;
+            const file = e.target.files[0];
+            const uploadedImage = await this.uploadAvatar({ file });
+            this.activeUser.avatar = uploadedImage || this.activeUser.avatar;
+            this.uploadingImage = false;
         },
         save() {
-            this.$store.dispatch('users/updateUser', { ...this.activeUser })
-            this.$router.push({ name: 'Profile' })
+            this.$store.dispatch("users/updateUser", { ...this.activeUser });
+            this.$router.push({ name: "Profile" });
         },
         cancel() {
-            this.$router.push({ name: 'Profile' })
+            this.$router.push({ name: "Profile" });
         }
-    }
+    },
+    components: { AppFormField }
 }
 </script>
 

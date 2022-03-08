@@ -11,7 +11,7 @@
       v-bind="$attrs"  
     />  <!-- v-bind = "$attrs" recupere les autres propriété qui seront mis dans <AppFormField> et qui ne sont pas passé en props-->
     <VeeErrorMessage :name="name" class="form-error" />
-    <!-- <div>{{$attrs}}</div> permet de voir ce qu'est $attrs ( objet qui contient les attributs mis dans ce component a partir du parent) -->
+    <!-- <div>$attrs</div> permet de voir ce qu'est $attrs - objet qui contient les attributs mis dans ce component a partir du parent -->
   </div>
 </template>    
 

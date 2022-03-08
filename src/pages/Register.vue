@@ -29,8 +29,8 @@
         </div> -->
 
         <AppFormField v-model="form.name" name="name" label="Name" rules="required" type="text" />
-        <AppFormField v-model="form.username" name="username" label="Username" rules="required" type="text" />
-        <AppFormField v-model="form.email" name="email" label="Email" rules="required|email" type="email" />
+        <AppFormField v-model="form.username" name="username" label="Username" rules="required|unique:users,username" type="text" />
+        <AppFormField v-model="form.email" name="email" label="Email" rules="required|email|unique:users,email" type="email" />
         <AppFormField v-model="form.password" name="password" label="Password" rules="required|min:8" type="password" />
 
         <div class="form-group">
