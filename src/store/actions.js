@@ -35,6 +35,7 @@ export default {
     return itemToReturn;
   },
   fetchItems({ dispatch }, { ids, resource , onSnapshott = null }) {
+    ids = ids || []
     return Promise.all(
       ids.map((id) => dispatch("fetchItem", { id, resource }))
     );
@@ -43,4 +44,7 @@ export default {
     context.state.unsubscribes.forEach((unsubscribe) => unsubscribe());
     context.commit("resetUnsubscribes");
   },
+  clearItems({commit}, {modules = []}){
+    commit('clearItems', { modules })
+  }
 };

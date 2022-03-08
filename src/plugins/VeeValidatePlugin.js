@@ -9,6 +9,7 @@ export default (app) => {   // premier parametre , le nom de la regle ,le second
   defineRule("email", email);
   defineRule("min", min);
   defineRule("max", max);
+  defineRule("url", url)
   defineRule("unique", async (value , args) => { // valeur que vee-validate transmet via l'input
     let firebaseTable, tableRow;
     if(Array.isArray(args)){

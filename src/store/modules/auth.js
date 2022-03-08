@@ -9,7 +9,7 @@ import {
   getDoc,
   orderBy,
   limit,
-  startAfter
+  startAfter,
 } from "firebase/firestore";
 import {
   getAuth,
@@ -18,6 +18,9 @@ import {
   signInWithEmailAndPassword,
   GoogleAuthProvider,
   signInWithPopup,
+  updateEmail,
+  reauthenticateWithCredential,
+  EmailAuthProvider
 } from "firebase/auth";
 import { getStorage, ref , uploadBytes , getDownloadURL} from "firebase/storage";
 
@@ -51,17 +54,14 @@ export default {
         commit("setAuthObserverUnsubscribe", unsubscribe);
       });
     },
-    async registerUserWithEmailAndPassword(
-      context,
-      { avatar = null, email, name, username, password }
-    ) {
+    async registerUserWithEmailAndPassword(context,{ avatar = null, email, name, username, password }){
       const auth = getAuth();
       const result = await createUserWithEmailAndPassword(
         auth,
         email,
         password
       );
-      avatar = await dispatch('uploadAvatar', { authId: result.user.uid, file: avatar })
+      avatar = await context.dispatch('uploadAvatar', { authId: result.user.uid, file: avatar })
       await context.dispatch("users/createUser", {
         id: result.user.uid,
         email,
@@ -69,6 +69,12 @@ export default {
         name,
         username,
       }, {root:true});
+    },
+    async reauthenticate({state},{email , password}){
+      const auth = await getAuth();
+      const user = auth.currentUser;
+      const authCredential = EmailAuthProvider.credential(email, password);
+      return await reauthenticateWithCredential(user, authCredential);
     },
     signInWithEmailAndPassword(context, { email, password }) {
       const auth = getAuth();
@@ -109,7 +115,6 @@ export default {
         const { addNotification } = useNotifications()
         addNotification({ message: 'Error uploading avatar image', type: 'error' })
       }
-      
     },
     fetchAuthUser: async ({ dispatch, commit }) => {
       const auth = getAuth();
@@ -159,6 +164,10 @@ export default {
         commit("setAuthUserUnsubscribe", null);
       }
     },
+    async updateEmail({state},{email}){
+      const auth = getAuth();
+      return await updateEmail(auth.currentUser, email)
+    }
   },
   mutations: {
     setAuthId(state, id) {

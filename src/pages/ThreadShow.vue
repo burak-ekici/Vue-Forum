@@ -10,6 +10,7 @@
     <p>
         By <a href="#" class="link-unstyled">{{user}}</a>, <AppDate :timestamp="thread.publishedAt" />.
         <span
+            v-if="thread.repliesCount"
             style="float:right; margin-top: 2px;"
             class="hide-mobile text-faded text-small"
             >{{thread.repliesCount}} replies by {{thread.contributorsCount}} contributors</span

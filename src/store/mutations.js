@@ -27,8 +27,7 @@ export default {
             state.users.userAllThreads.push(item) // permet de creer un nouveau post ou autres
         }
     },
-    
-    
+    clearItems( state, {modules=[]}){
+        modules.forEach(module => {state[module].items = [] })
+    }
 }
-
-

@@ -68,7 +68,7 @@ export default {
                 .map( thread => this.$store.getters['threads/thread'](thread.id))
         },
         threadCount(){
-            return this.forum.threads.length || 0
+            return this.forum.threads?.length || 0
         },
         totalPages(){
             if(!this.threadCount) return 0
