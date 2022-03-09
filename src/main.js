@@ -8,6 +8,7 @@ import ClickOutsideDirective from '@/plugins/ClickOutsideDirective'
 import PageScrolling from '@/plugins/PageScrollingDirective'
 import Vue3Pagination from '@/plugins/Vue3Pagination'
 import VeeValidatePlugin from '@/plugins/VeeValidatePlugin'
+import {createHead} from '@vueuse/head'
 
 const forumApp = createApp(App)
 
@@ -23,6 +24,7 @@ forumApp.use(ClickOutsideDirective)  // notre plugin de Custom Directive
 forumApp.use(PageScrolling)  // notre plugin de Custom Directive
 forumApp.use(Vue3Pagination)  // notre plugin de Custom Directive
 forumApp.use(VeeValidatePlugin)  // notre plugin de Custom Directive
+forumApp.use(createHead())
 
 // fonction dans la doc vue.js -> section (en anglais) 'base component names ->  puis detailed explanation' 
 // Permet de chercher tous les fichier dans le dossier components qui commencent par App

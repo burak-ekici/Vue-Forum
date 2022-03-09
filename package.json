@@ -15,6 +15,7 @@
     "@hennge/vue3-pagination": "^1.0.17",
     "@vee-validate/i18n": "^4.5.9",
     "@vee-validate/rules": "^4.5.9",
+    "@vueuse/head": "^0.7.5",
     "core-js": "^3.6.5",
     "dayjs": "^1.10.7",
     "eslint": "^8.1.0",
@@ -31,7 +32,8 @@
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
     "@vue/compiler-sfc": "^3.0.0",
-    "firestore-export-import": "^0.14.0"
+    "firestore-export-import": "^0.14.0",
+    "vue-cli-plugin-webpack-bundle-analyzer": "~4.0.0"
   },
   "browserslist": [
     "> 1%",

@@ -1,4 +1,19 @@
 <template>
+  <AppHead>
+    <title>Burak's Forum</title>
+    <meta name="description" content="My Forum made with Vue 3" /> 
+
+     <!-- Social -->
+    <meta property="og:title" content="Vue.js 3 Master Class Forum">
+    <meta property="og:description" content="An Awesome Vue.js 3 powered forum!">
+    <meta property="og:image" content="https://vueschool.io/media/f007f6057444d9a7f567163391d2b366/vuejs-3-master-class-not-transparent.jpg">
+
+    <!-- Twitter -->
+    <meta name="twitter:title" content="Vue.js 3 Master Class Forum">
+    <meta name="twitter:description" content="An Awesome Vue.js 3 powered forum!">
+    <meta name="twitter:image" content="https://vueschool.io/media/f007f6057444d9a7f567163391d2b366/vuejs-3-master-class-not-transparent.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+  </AppHead>
   <TheNavbar />
   <div class="container">
     <router-view v-show="showPage" @ready="onPageReady" :key="`${$route.path}${JSON.stringify($route.query)}`" />  <!-- le :key='$route.path' permet de destroy et regenerer la page a chaque changement de lien car si on reste sur une même page par exemple : thread/-Vff..  et que l'on va sur thread/-Other , la page va bugué, car il ne va pas recharger la page, il faut la detruire avant  -->
